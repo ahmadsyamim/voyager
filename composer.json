@@ -1,21 +1,21 @@
 {
-  "name": "tcg/voyager",
-  "description": "A Laravel Admin Package for The Control Group to make your life easier and steer your project in the right direction",
+  "name": "ahmadsyamim/voyager",
+  "description": "Forked from tcg/voyager. A Laravel Admin Package for The Control Group to make your life easier and steer your project in the right direction",
   "keywords": [
     "laravel",
     "admin",
     "panel"
   ],
   "license": "MIT",
-  "homepage": "https://voyager.devdojo.com/",
+  "homepage": "https://github.com/ahmadsyamim/voyager/",
   "support": {
-    "issues": "https://github.com/the-control-group/voyager/issues",
-    "source": "https://github.com/the-control-group/voyager"
+    "issues": "https://github.com/ahmadsyamim/voyager/issues",
+    "source": "https://github.com/ahmadsyamim/voyager"
   },
   "authors": [
     {
-      "name": "Tony Lea",
-      "email": "tony.lea@thecontrolgroup.com"
+      "name": "Ahmad Syamim Suhairi",
+      "email": "ahmad.syamim@gmail.com"
     }
   ],
   "require": {
