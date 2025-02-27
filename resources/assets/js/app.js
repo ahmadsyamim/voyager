@@ -1,3 +1,5 @@
+import Vue from 'vue';
+window.Vue = Vue;
 import jQuery from 'jquery';
 window.jQuery = jQuery;
 window.$ = jQuery;

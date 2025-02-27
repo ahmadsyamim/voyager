@@ -17,61 +17,58 @@ export default function AdminMenu(_props) {
     }, []);
 
     return (
-        <>
-        <div>test</div>
-            <ul className="nav navbar-nav">
-                {items.map((item, i) => (
-                    <li
-                    key={i}
-                        className={
-                            item.children.length > 0
-                                ? "dropdown" + (item.active ? " active" : "")
-                                : "" + " " + index == i
-                                ? "active"
-                                : ""
+        <ul className="nav navbar-nav">
+            {items.map((item, i) => (
+                <li
+                key={i}
+                    className={
+                        item.children.length > 0
+                            ? "dropdown" + (item.active ? " active" : "")
+                            : "" + " " + index == i
+                            ? "active"
+                            : ""
+                    }
+                >
+                    <a
+                        // target="item.target"
+                        href={item.children.length > 0 ? "#" : item.href}
+                        onClick={() => {
+                            if (item.children.length > 0) {
+                                if (index == i) {
+                                    setIndex(null);
+                                } else {
+                                    setIndex(i);
+                                }
+                            }
+                        }}
+                        aria-expanded={
+                            item.children.length > 0 && index == i
+                                ? true
+                                : false
                         }
                     >
-                        <a
-                            // target="item.target"
-                            href={item.children.length > 0 ? "#" : item.href}
-                            onClick={() => {
-                                if (item.children.length > 0) {
-                                    if (index == i) {
-                                        setIndex(null);
-                                    } else {
-                                        setIndex(i);
-                                    }
+                        <span className={"icon " + item.icon_class}></span>
+                        <span className="title"> {t(item.title)} </span>
+                    </a>
+                    {item.children.length > 0 && index == i && (
+                        <>
+                            <div
+                                className={
+                                    "panel-collapse collapse" +
+                                    (index == i ? " in" : " ")
                                 }
-                            }}
-                            aria-expanded={
-                                item.children.length > 0 && index == i
-                                    ? true
-                                    : false
-                            }
-                        >
-                            <span className={"icon " + item.icon_class}></span>
-                            <span className="title"> {t(item.title)} </span>
-                        </a>
-                        {item.children.length > 0 && index == i && (
-                            <>
-                                <div
-                                    className={
-                                        "panel-collapse collapse" +
-                                        (index == i ? " in" : " ")
-                                    }
-                                >
-                                    <div className="panel-body">
-                                        <AdminMenu
-                                            items={item.children}
-                                        ></AdminMenu>
-                                    </div>
+                            >
+                                <div className="panel-body">
+                                    <AdminMenu
+                                        items={item.children}
+                                    ></AdminMenu>
                                 </div>
-                            </>
-                        )}
-                    </li>
-                ))}
-            </ul>
-        </>
+                            </div>
+                        </>
+                    )}
+                </li>
+            ))}
+        </ul>
     );
 }
 
