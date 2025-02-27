@@ -45,7 +45,6 @@ class InstallCommand extends Command
 
         $this->composer = $composer;
         $this->composer->setWorkingPath(base_path());
-
     }
 
     protected function getOptions()
@@ -63,8 +62,8 @@ class InstallCommand extends Command
      */
     protected function findComposer()
     {
-        if (file_exists(getcwd().'/composer.phar')) {
-            return '"'.PHP_BINARY.'" '.getcwd().'/composer.phar';
+        if (file_exists(getcwd() . '/composer.phar')) {
+            return '"' . PHP_BINARY . '" ' . getcwd() . '/composer.phar';
         }
 
         return 'composer';
@@ -115,15 +114,15 @@ class InstallCommand extends Command
         if (false === strpos($routes_contents, 'Voyager::routes()')) {
             $filesystem->append(
                 base_path('routes/web.php'),
-                PHP_EOL.PHP_EOL."Route::group(['prefix' => 'admin'], function () {".PHP_EOL."    Voyager::routes();".PHP_EOL."});".PHP_EOL
+                PHP_EOL . PHP_EOL . "Route::group(['prefix' => 'admin'], function () {" . PHP_EOL . "    Voyager::routes();" . PHP_EOL . "});" . PHP_EOL
             );
         }
 
-        $publishablePath = dirname(__DIR__).'/../publishable';
+        $publishablePath = dirname(__DIR__) . '/../publishable';
 
         if ($this->option('with-dummy')) {
             $this->info('Publishing dummy content');
-            $tags = ['dummy_seeders', 'dummy_content', 'dummy_config', 'dummy_migrations'];
+            $tags = ['dummy_seeders', 'dummy_content', 'dummy_config', 'dummy_migrations', 'dummy_adminer'];
             $this->call('vendor:publish', ['--provider' => VoyagerDummyServiceProvider::class, '--tag' => $tags]);
         } else {
             $this->call('vendor:publish', ['--provider' => VoyagerServiceProvider::class, '--tag' => ['config', 'voyager_avatar']]);
@@ -148,5 +147,4 @@ class InstallCommand extends Command
 
         $this->info('Successfully installed Voyager! Enjoy');
     }
-
 }
