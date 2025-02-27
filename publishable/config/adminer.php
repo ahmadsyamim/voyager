@@ -66,5 +66,7 @@ return [
     |   'PluginClassName'
     |
     */
-    'plugins' => [],
+    'plugins' => [
+        \TCG\Voyager\Adminer\Plugins\AdminerDatabaseHide::class
+    ],
 ];

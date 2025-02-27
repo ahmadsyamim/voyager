@@ -120,7 +120,7 @@ Route::group(['as' => 'voyager.'], function () {
         // Database Routes
         Route::resource('database', $namespacePrefix . 'VoyagerDatabaseController');
 
-        Route::any('/adminer', ['uses' => '\Onecentlin\Adminer\Http\Controllers\AdminerController@index'])->withoutMiddleware([Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class]);
+        Route::any('/adminer', ['uses' => '\Onecentlin\Adminer\Http\Controllers\AdminerController@index', 'as' => 'adminer'])->withoutMiddleware([Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class]);
 
         // Compass Routes
         Route::group([
