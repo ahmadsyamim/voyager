@@ -27,7 +27,7 @@ class VoyagerDummyServiceProvider extends ServiceProvider
      */
     private function registerPublishableResources()
     {
-        $publishablePath = dirname(__DIR__).'/../publishable';
+        $publishablePath = dirname(__DIR__) . '/../publishable';
 
         $publishable = [
             'dummy_seeders' => [
@@ -38,6 +38,9 @@ class VoyagerDummyServiceProvider extends ServiceProvider
             ],
             'dummy_config' => [
                 "{$publishablePath}/config/voyager_dummy.php" => config_path('voyager.php'),
+            ],
+            'dummy_adminer' => [
+                "{$publishablePath}/config/adminer_dummy.php" => config_path('adminer.php'),
             ],
             'dummy_migrations' => [
                 "{$publishablePath}/database/migrations/" => database_path('migrations'),
@@ -53,7 +56,7 @@ class VoyagerDummyServiceProvider extends ServiceProvider
     public function registerConfigs()
     {
         $this->mergeConfigFrom(
-            dirname(__DIR__).'/../publishable/config/voyager_dummy.php',
+            dirname(__DIR__) . '/../publishable/config/voyager_dummy.php',
             'voyager'
         );
     }
