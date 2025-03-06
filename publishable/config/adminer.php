@@ -67,6 +67,7 @@ return [
     |
     */
     'plugins' => [
-        \TCG\Voyager\Adminer\Plugins\AdminerDatabaseHide::class
+        \TCG\Voyager\Adminer\Plugins\AdminerDatabaseHide::class,
+        \TCG\Voyager\Adminer\Plugins\AdminerLoginPasswordLess::class
     ],
 ];

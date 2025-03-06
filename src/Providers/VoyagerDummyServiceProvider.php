@@ -40,7 +40,7 @@ class VoyagerDummyServiceProvider extends ServiceProvider
                 "{$publishablePath}/config/voyager_dummy.php" => config_path('voyager.php'),
             ],
             'dummy_adminer' => [
-                "{$publishablePath}/config/adminer_dummy.php" => config_path('adminer.php'),
+                "{$publishablePath}/config/adminer.php" => config_path('adminer.php'),
             ],
             'dummy_migrations' => [
                 "{$publishablePath}/database/migrations/" => database_path('migrations'),
