@@ -120,7 +120,7 @@ class MenuItemsTableSeeder extends Seeder
         ]);
         if (!$menuItem->exists) {
             $menuItem->fill([
-                'target'     => '_self',
+                'target'     => '_blank',
                 'icon_class' => 'voyager-data',
                 'color'      => null,
                 'parent_id'  => $toolsMenuItem->id,
