@@ -4,9 +4,7 @@ namespace TCG\Voyager\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Artisan;
 use TCG\Voyager\Database\Schema\SchemaManager;
 use TCG\Voyager\Facades\Voyager;
 use TCG\Voyager\Traits\Translatable;
@@ -89,11 +87,6 @@ class DataType extends Model
         try {
             DB::beginTransaction();
 
-            // Generate model if not exist
-            if (!class_exists($this->model_name)) {
-                $this->generateModel(Arr::get($requestData, 'name'));
-            }
-
             // Prepare data
             foreach (['generate_permissions', 'server_side'] as $field) {
                 if (!isset($requestData[$field])) {
@@ -102,11 +95,10 @@ class DataType extends Model
             }
 
             if ($this->fill($requestData)->save()) {
-
                 $fields = $this->fields(
                     (strlen($this->model_name) != 0)
-                        ? DB::getTablePrefix() . app($this->model_name)->getTable()
-                        : DB::getTablePrefix() . Arr::get($requestData, 'name')
+                    ? DB::getTablePrefix().app($this->model_name)->getTable()
+                    : DB::getTablePrefix().Arr::get($requestData, 'name')
                 );
 
                 $requestData = $this->getRelationships($requestData, $fields);
@@ -117,15 +109,15 @@ class DataType extends Model
                         $dataRow->{$check} = isset($requestData["field_{$check}_{$field}"]);
                     }
 
-                    $dataRow->required = !empty($requestData['field_required_' . $field]);
-                    $dataRow->field = $requestData['field_' . $field];
-                    $dataRow->type = $requestData['field_input_type_' . $field];
-                    $dataRow->details = json_decode($requestData['field_details_' . $field]);
-                    $dataRow->display_name = $requestData['field_display_name_' . $field];
-                    $dataRow->order = intval($requestData['field_order_' . $field]);
+                    $dataRow->required = !empty($requestData['field_required_'.$field]);
+                    $dataRow->field = $requestData['field_'.$field];
+                    $dataRow->type = $requestData['field_input_type_'.$field];
+                    $dataRow->details = json_decode($requestData['field_details_'.$field]);
+                    $dataRow->display_name = $requestData['field_display_name_'.$field];
+                    $dataRow->order = intval($requestData['field_order_'.$field]);
 
                     // Prepare Translations and Transform data
-                    $translations = (is_bread_translatable($dataRow) && !empty($requestData['field_display_name_' . $field . '_i18n']))
+                    $translations = (is_bread_translatable($dataRow) && !empty($requestData['field_display_name_'.$field.'_i18n']))
                         ? $dataRow->prepareTranslationsFromArray($field, $requestData)
                         : [];
 
@@ -162,25 +154,6 @@ class DataType extends Model
         return false;
     }
 
-    private function generateModel(string $modelName, array $flags = [])
-    {
-        $command = 'make:model ' . Str::studly(Str::singular($modelName));
-
-        foreach ($flags as $flag) {
-            $command .= ' ' . $flag;
-        }
-
-        try {
-            Artisan::call($command);
-            return true;
-        } catch (\Exception $e) {
-            throw $e;
-            return false;
-        }
-    }
-
-
-
     public function fields($name = null)
     {
         if (is_null($name)) {
@@ -207,27 +180,27 @@ class DataType extends Model
                     // Push the relationship on the allowed fields
                     array_push($fields, $relationship);
 
-                    $relationship_column = $requestData['relationship_column_belongs_to_' . $relationship];
-                    if ($requestData['relationship_type_' . $relationship] == 'hasOne' || $requestData['relationship_type_' . $relationship] == 'hasMany') {
-                        $relationship_column = $requestData['relationship_column_' . $relationship];
+                    $relationship_column = $requestData['relationship_column_belongs_to_'.$relationship];
+                    if ($requestData['relationship_type_'.$relationship] == 'hasOne' || $requestData['relationship_type_'.$relationship] == 'hasMany') {
+                        $relationship_column = $requestData['relationship_column_'.$relationship];
                     }
 
                     // Build the relationship details
                     $relationshipDetails = [
-                        'model'       => $requestData['relationship_model_' . $relationship],
-                        'table'       => $requestData['relationship_table_' . $relationship],
-                        'type'        => $requestData['relationship_type_' . $relationship],
+                        'model'       => $requestData['relationship_model_'.$relationship],
+                        'table'       => $requestData['relationship_table_'.$relationship],
+                        'type'        => $requestData['relationship_type_'.$relationship],
                         'column'      => $relationship_column,
-                        'key'         => $requestData['relationship_key_' . $relationship],
-                        'label'       => $requestData['relationship_label_' . $relationship],
-                        'pivot_table' => $requestData['relationship_pivot_table_' . $relationship],
-                        'pivot'       => ($requestData['relationship_type_' . $relationship] == 'belongsToMany') ? '1' : '0',
-                        'taggable'    => $requestData['relationship_taggable_' . $relationship] ?? '0',
+                        'key'         => $requestData['relationship_key_'.$relationship],
+                        'label'       => $requestData['relationship_label_'.$relationship],
+                        'pivot_table' => $requestData['relationship_pivot_table_'.$relationship],
+                        'pivot'       => ($requestData['relationship_type_'.$relationship] == 'belongsToMany') ? '1' : '0',
+                        'taggable'    => $requestData['relationship_taggable_'.$relationship] ?? '0',
                     ];
 
-                    $details = json_decode($requestData['field_details_' . $relationship], true);
+                    $details = json_decode($requestData['field_details_'.$relationship], true);
                     $merge = array_merge($details, $relationshipDetails);
-                    $requestData['field_details_' . $relationship] = json_encode($merge);
+                    $requestData['field_details_'.$relationship] = json_encode($merge);
                 }
             }
         }
@@ -242,8 +215,8 @@ class DataType extends Model
 
         $_fieldOptions = SchemaManager::describeTable(
             (strlen($this->model_name) != 0)
-                ? app($this->model_name)->getTable()
-                : $this->name
+            ? app($this->model_name)->getTable()
+            : $this->name
         )->toArray();
 
         $fieldOptions = [];
