@@ -639,8 +639,8 @@
 
                     var options = $.map(data, function(obj, key) {
                         return {
-                            id: key,
-                            text: key
+                            id: obj.field,
+                            text: obj.field
                         };
                     });
 
