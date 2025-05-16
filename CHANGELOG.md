@@ -1,3 +1,9 @@
+#### 1.10.2 (2025-05-17)
+
+##### Fixes
+
+- fix: on-create relation, use field instead of key
+
 #### 1.10.1 (2025-03-06)
 
 ##### New Features
