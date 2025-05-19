@@ -148,7 +148,14 @@ abstract class SchemaManager
 
         // Check if the connection supports the getTables method
         if (method_exists($connection->getSchemaBuilder(), 'getTables')) {
-            $tables = $connection->getSchemaBuilder()->getTables();
+            switch (DB::connection()->getDriverName()) {
+                case 'mysql':
+                    $tables = $connection->getSchemaBuilder()->getTables(DB::connection()->getDatabaseName());
+                    break;
+                default:
+                    $tables = $connection->getSchemaBuilder()->getTables();
+            }
+
             return collect($tables)->pluck('name')->values()->all();
         }
 
