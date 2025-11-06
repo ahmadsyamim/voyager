@@ -260,8 +260,9 @@ var AcePopup = /** @class */ (function () {
                 return true;
             }
             var el = this.container;
-            var screenHeight = window.innerHeight;
-            var screenWidth = window.innerWidth;
+            var scrollBarSize = this.renderer.scrollBar.width || 10;
+            var screenHeight = window.innerHeight - scrollBarSize;
+            var screenWidth = window.innerWidth - scrollBarSize;
             var renderer = this.renderer;
             var maxH = renderer.$maxLines * lineHeight * 1.4;
             var dims = { top: 0, bottom: 0, left: 0 };
@@ -300,7 +301,7 @@ var AcePopup = /** @class */ (function () {
             }
             if (anchor === "top") {
                 el.style.top = "";
-                el.style.bottom = (screenHeight - dims.bottom) + "px";
+                el.style.bottom = (screenHeight + scrollBarSize - dims.bottom) + "px";
                 popup.isTopdown = false;
             }
             else {
@@ -321,6 +322,7 @@ var AcePopup = /** @class */ (function () {
             }
             popup.anchorPos = pos;
             popup.anchor = anchor;
+            dom.$fixPositionBug(el);
             return true;
         };
         popup.show = function (pos, lineHeight, topdownOnly) {
@@ -1949,7 +1951,7 @@ var Autocomplete = /** @class */ (function () {
     };
     Autocomplete.prototype.updateDocTooltip = function () {
         var popup = this.popup;
-        var all = this.completions.filtered;
+        var all = this.completions && this.completions.filtered;
         var selected = all && (all[popup.getHoveredRow()] || all[popup.getRow()]);
         var doc = null;
         if (!selected || !this.editor || !this.popup.isOpen)
@@ -1997,32 +1999,53 @@ var Autocomplete = /** @class */ (function () {
             this.popup.container.appendChild(this.tooltipNode);
         var popup = this.popup;
         var rect = popup.container.getBoundingClientRect();
-        tooltipNode.style.top = popup.container.style.top;
-        tooltipNode.style.bottom = popup.container.style.bottom;
-        tooltipNode.style.display = "block";
-        if (window.innerWidth - rect.right < 320) {
-            if (rect.left < 320) {
-                if (popup.isTopdown) {
-                    tooltipNode.style.top = rect.bottom + "px";
-                    tooltipNode.style.left = rect.left + "px";
-                    tooltipNode.style.right = "";
-                    tooltipNode.style.bottom = "";
-                }
-                else {
-                    tooltipNode.style.top = popup.container.offsetTop - tooltipNode.offsetHeight + "px";
-                    tooltipNode.style.left = rect.left + "px";
-                    tooltipNode.style.right = "";
-                    tooltipNode.style.bottom = "";
-                }
+        var targetWidth = 400;
+        var targetHeight = 300;
+        var scrollBarSize = popup.renderer.scrollBar.width || 10;
+        var leftSize = rect.left;
+        var rightSize = window.innerWidth - rect.right - scrollBarSize;
+        var topSize = popup.isTopdown ? rect.top : window.innerHeight - scrollBarSize - rect.bottom;
+        var scores = [
+            Math.min(rightSize / targetWidth, 1),
+            Math.min(leftSize / targetWidth, 1),
+            Math.min(topSize / targetHeight * 0.9),
+        ];
+        var max = Math.max.apply(Math, scores);
+        var tooltipStyle = tooltipNode.style;
+        tooltipStyle.display = "block";
+        if (max == scores[0]) {
+            tooltipStyle.left = (rect.right + 1) + "px";
+            tooltipStyle.right = "";
+            tooltipStyle.maxWidth = targetWidth * max + "px";
+            tooltipStyle.top = rect.top + "px";
+            tooltipStyle.bottom = "";
+            tooltipStyle.maxHeight = Math.min(window.innerHeight - scrollBarSize - rect.top, targetHeight) + "px";
+        }
+        else if (max == scores[1]) {
+            tooltipStyle.right = window.innerWidth - rect.left + "px";
+            tooltipStyle.left = "";
+            tooltipStyle.maxWidth = targetWidth * max + "px";
+            tooltipStyle.top = rect.top + "px";
+            tooltipStyle.bottom = "";
+            tooltipStyle.maxHeight = Math.min(window.innerHeight - scrollBarSize - rect.top, targetHeight) + "px";
+        }
+        else if (max == scores[2]) {
+            tooltipStyle.left = window.innerWidth - rect.left + "px";
+            tooltipStyle.maxWidth = Math.min(targetWidth, window.innerWidth) + "px";
+            if (popup.isTopdown) {
+                tooltipStyle.top = rect.bottom + "px";
+                tooltipStyle.left = rect.left + "px";
+                tooltipStyle.right = "";
+                tooltipStyle.bottom = "";
+                tooltipStyle.maxHeight = Math.min(window.innerHeight - scrollBarSize - rect.bottom, targetHeight) + "px";
             }
             else {
-                tooltipNode.style.right = window.innerWidth - rect.left + "px";
-                tooltipNode.style.left = "";
+                tooltipStyle.top = popup.container.offsetTop - tooltipNode.offsetHeight + "px";
+                tooltipStyle.left = rect.left + "px";
+                tooltipStyle.right = "";
+                tooltipStyle.bottom = "";
+                tooltipStyle.maxHeight = Math.min(popup.container.offsetTop, targetHeight) + "px";
             }
-        }
-        else {
-            tooltipNode.style.left = (rect.right + 1) + "px";
-            tooltipNode.style.right = "";
         }
     };
     Autocomplete.prototype.hideDocTooltip = function () {
@@ -2345,7 +2368,26 @@ ace.define("ace/ext/menu_tools/settings_menu.css",["require","exports","module"]
 
 });
 
-ace.define("ace/ext/menu_tools/overlay_page",["require","exports","module","ace/lib/dom","ace/ext/menu_tools/settings_menu.css"], function(require, exports, module){/*jslint indent: 4, maxerr: 50, white: true, browser: true, vars: true*/
+ace.define("ace/ext/menu_tools/overlay_page",["require","exports","module","ace/ext/menu_tools/overlay_page","ace/lib/dom","ace/ext/menu_tools/settings_menu.css"], function(require, exports, module){/**
+ * ## Overlay Page utility
+ *
+ * Provides modal overlay functionality for displaying editor extension interfaces. Creates a full-screen overlay with
+ * configurable backdrop behavior, keyboard navigation (ESC to close), and focus management. Used by various extensions
+ * to display menus, settings panels, and other interactive content over the editor interface.
+ *
+ * **Usage:**
+ * ```javascript
+ * var overlayPage = require('./overlay_page').overlayPage;
+ * var contentElement = document.createElement('div');
+ * contentElement.innerHTML = '<h1>Settings</h1>';
+ *
+ * var overlay = overlayPage(editor, contentElement, function() {
+ *   console.log('Overlay closed');
+ * });
+ * ```
+ *
+ * @module
+ */
 'use strict';
 var dom = require("../../lib/dom");
 var cssText = require("./settings_menu.css");
@@ -2402,7 +2444,17 @@ module.exports.overlayPage = function overlayPage(editor, contentElement, callba
 
 });
 
-ace.define("ace/ext/modelist",["require","exports","module"], function(require, exports, module){"use strict";
+ace.define("ace/ext/modelist",["require","exports","module"], function(require, exports, module){/**
+ * ## File mode detection utility
+ *
+ * Provides automatic detection of editor syntax modes based on file paths and extensions. Maps file extensions to
+ * appropriate Ace Editor syntax highlighting modes for over 100 programming languages and file formats including
+ * JavaScript, TypeScript, HTML, CSS, Python, Java, C++, and many others. Supports complex extension patterns and
+ * provides fallback mechanisms for unknown file types.
+ *
+ * @module
+ */
+"use strict";
 var modes = [];
 function getModeForPath(path) {
     var mode = modesByName.text;
@@ -2452,13 +2504,14 @@ var supportedModes = {
     Assembly_x86: ["asm|a"],
     Astro: ["astro"],
     AutoHotKey: ["ahk"],
-    BatchFile: ["bat|cmd"],
     Basic: ["bas|bak"],
+    BatchFile: ["bat|cmd"],
     BibTeX: ["bib"],
     C_Cpp: ["cpp|c|cc|cxx|h|hh|hpp|ino"],
     C9Search: ["c9search_results"],
     Cirru: ["cirru|cr"],
     Clojure: ["clj|cljs"],
+    Clue: ["clue"],
     Cobol: ["CBL|COB"],
     coffee: ["coffee|cf|cson|^Cakefile"],
     ColdFusion: ["cfm|cfc"],
@@ -2655,16 +2708,39 @@ for (var name in supportedModes) {
     modesByName[filename] = mode;
     modes.push(mode);
 }
-module.exports = {
-    getModeForPath: getModeForPath,
-    modes: modes,
-    modesByName: modesByName
-};
+exports.getModeForPath = getModeForPath;
+exports.modes = modes;
+exports.modesByName = modesByName;
 
 });
 
 ace.define("ace/ext/prompt",["require","exports","module","ace/config","ace/range","ace/lib/dom","ace/autocomplete","ace/autocomplete/popup","ace/autocomplete/popup","ace/undomanager","ace/tokenizer","ace/ext/menu_tools/overlay_page","ace/ext/modelist"], function(require, exports, module){/**
- * @typedef {import("../editor").Editor} Editor
+ * ## User Input Prompt extension
+ *
+ * Provides customizable modal prompts for gathering user input with support for autocompletion, validation, and
+ * specialized input types. Includes built-in prompt types for navigation (goto line), command palette, and mode
+ * selection, with extensible architecture for custom prompt implementations.
+ *
+ * **Built-in Prompt Types:**
+ * - `gotoLine`: Navigate to specific line numbers with selection support
+ * - `commands`: Command palette with searchable editor commands and shortcuts
+ * - `modes`: Language mode selector with filtering capabilities
+ *
+ * **Usage:**
+ * ```javascript
+ * // Basic prompt
+ * prompt(editor, "Default value", {
+ *   placeholder: "Enter text...",
+ *   onAccept: (data) => console.log(data.value)
+ * });
+ *
+ * // Built-in prompts
+ * prompt.gotoLine(editor);
+ * prompt.commands(editor);
+ * prompt.modes(editor);
+ * ```
+ *
+ * @module
  */
 "use strict";
 var nls = require("../config").nls;

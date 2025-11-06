@@ -30,7 +30,9 @@ require('./voyager_ace_editor');
 window.helpers = require('./helpers.js');
 
 var requireReact = require.context('./react', true, /\.jsx$/);
-requireReact.keys().forEach(requireReact);
+if (requireReact) {
+  requireReact.keys().forEach(requireReact);
+}
 
 Vue.component('admin-menu', require('./vue/admin_menu.vue').default);
 
