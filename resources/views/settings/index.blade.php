@@ -276,7 +276,7 @@
                                     @elseif($setting->type == "markdown_editor")
                                         <textarea class="form-control easymde" name="{{ $setting->key }}">{{ $setting->value ?? '' }}</textarea>
                                     @elseif($setting->type == "code_editor")
-                                        <?php $options = json_decode($setting->details); ?>
+                                        <?php $options = json_decode((string) $setting->details); ?>
                                         <div id="{{ $setting->key }}" data-theme="{{ @$options->theme }}" data-language="{{ @$options->language }}" class="ace_editor min_height_400" name="{{ $setting->key }}">{{ $setting->value ?? '' }}</div>
                                         <textarea name="{{ $setting->key }}" id="{{ $setting->key }}_textarea" class="hidden">{{ $setting->value ?? '' }}</textarea>
                                     @elseif($setting->type == "image" || $setting->type == "file")
@@ -300,10 +300,10 @@
                                         @endif
                                         <input type="file" name="{{ $setting->key }}">
                                     @elseif($setting->type == "select_dropdown")
-                                        <?php $options = json_decode($setting->details); ?>
+                                        <?php $options = json_decode((string) $setting->details); ?>
                                         <?php $selected_value = (isset($setting->value) && !empty($setting->value)) ? $setting->value : NULL; ?>
                                         <select class="form-control" name="{{ $setting->key }}">
-                                            <?php $default = (isset($options->default)) ? $options->default : NULL; ?>
+                                            <?php $default = $options->default ?? NULL; ?>
                                             @if(isset($options->options))
                                                 @foreach($options->options as $index => $option)
                                                     <option value="{{ $index }}" @if($default == $index && $selected_value === NULL) selected="selected" @endif @if($selected_value == $index) selected="selected" @endif>{{ $option }}</option>
@@ -312,9 +312,9 @@
                                         </select>
 
                                     @elseif($setting->type == "radio_btn")
-                                        <?php $options = json_decode($setting->details); ?>
+                                        <?php $options = json_decode((string) $setting->details); ?>
                                         <?php $selected_value = (isset($setting->value) && !empty($setting->value)) ? $setting->value : NULL; ?>
-                                        <?php $default = (isset($options->default)) ? $options->default : NULL; ?>
+                                        <?php $default = $options->default ?? NULL; ?>
                                         <ul class="radio">
                                             @if(isset($options->options))
                                                 @foreach($options->options as $index => $option)
@@ -328,7 +328,7 @@
                                             @endif
                                         </ul>
                                     @elseif($setting->type == "checkbox")
-                                        <?php $options = json_decode($setting->details); ?>
+                                        <?php $options = json_decode((string) $setting->details); ?>
                                         <?php $checked = (isset($setting->value) && $setting->value == 1) ? true : false; ?>
                                         @if (isset($options->on) && isset($options->off))
                                             <input type="checkbox" name="{{ $setting->key }}" class="toggleswitch" @if($checked) checked @endif data-on="{{ $options->on }}" data-off="{{ $options->off }}">

@@ -64,7 +64,7 @@ class VoyagerMediaController extends Controller
         foreach ($storageItems as $item) {
             if ($item['type'] == 'dir') {
                 $files[] = [
-                    'name'          => $item['basename'] ?? basename($item['path']),
+                    'name'          => $item['basename'] ?? basename((string) $item['path']),
                     'type'          => 'folder',
                     'path'          => Storage::disk($this->filesystem)->url($item['path']),
                     'relative_path' => $item['path'],
@@ -72,7 +72,7 @@ class VoyagerMediaController extends Controller
                     'last_modified' => '',
                 ];
             } else {
-                if (empty(pathinfo($item['path'], PATHINFO_FILENAME)) && !config('voyager.hidden_files')) {
+                if (empty(pathinfo((string) $item['path'], PATHINFO_FILENAME)) && !config('voyager.hidden_files')) {
                     continue;
                 }
                 // Its a thumbnail and thumbnails should be hidden
@@ -85,8 +85,8 @@ class VoyagerMediaController extends Controller
                     $mime = (new \League\MimeTypeDetection\ExtensionMimeTypeDetector())->detectMimeTypeFromFile($item['path']);
                 }
                 $files[] = [
-                    'name'          => $item['basename'] ?? basename($item['path']),
-                    'filename'      => $item['filename'] ?? basename($item['path'], '.'.pathinfo($item['path'])['extension']),
+                    'name'          => $item['basename'] ?? basename((string) $item['path']),
+                    'filename'      => $item['filename'] ?? basename((string) $item['path'], '.'.pathinfo((string) $item['path'])['extension']),
                     'type'          => $item['mimetype'] ?? $mime,
                     'path'          => Storage::disk($this->filesystem)->url($item['path']),
                     'relative_path' => $item['path'],
@@ -161,7 +161,7 @@ class VoyagerMediaController extends Controller
         $this->authorize('browse_media');
         $path = str_replace('//', '/', Str::finish($request->path, '/'));
         $dest = str_replace('//', '/', Str::finish($request->destination, '/'));
-        if (strpos($dest, '/../') !== false) {
+        if (str_contains($dest, '/../')) {
             $dest = substr($path, 0, -1);
             $dest = substr($dest, 0, strripos($dest, '/') + 1);
         }
@@ -246,19 +246,15 @@ class VoyagerMediaController extends Controller
             } else {
                 $name = str_replace('{uid}', Auth::user()->getKey(), $request->get('filename'));
                 if (Str::contains($name, '{date:')) {
-                    $name = preg_replace_callback('/\{date:([^\/\}]*)\}/', function ($date) {
-                        return \Carbon\Carbon::now()->format($date[1]);
-                    }, $name);
+                    $name = preg_replace_callback('/\{date:([^\/\}]*)\}/', fn($date) => \Carbon\Carbon::now()->format($date[1]), $name);
                 }
                 if (Str::contains($name, '{random:')) {
-                    $name = preg_replace_callback('/\{random:([0-9]+)\}/', function ($random) {
-                        return Str::random($random[1]);
-                    }, $name);
+                    $name = preg_replace_callback('/\{random:([0-9]+)\}/', fn($random) => Str::random($random[1]), $name);
                 }
             }
 
             $file = $request->file->storeAs($request->upload_path, $name.'.'.$extension, $this->filesystem);
-            $file = preg_replace('#/+#', '/', $file);
+            $file = preg_replace('#/+#', '/', (string) $file);
 
             $imageMimeTypes = [
                 'image/jpeg',
@@ -284,7 +280,7 @@ class VoyagerMediaController extends Controller
                                 $thumbnail = $thumbnail->fit(
                                     $thumbnail_data->width,
                                     ($thumbnail_data->height ?? null),
-                                    function ($constraint) {
+                                    function ($constraint): void {
                                         $constraint->aspectRatio();
                                     },
                                     ($thumbnail_data->position ?? 'center')
@@ -300,7 +296,7 @@ class VoyagerMediaController extends Controller
                                 $thumbnail = $thumbnail->resize(
                                     $thumbnail_data->width,
                                     ($thumbnail_data->height ?? null),
-                                    function ($constraint) use ($thumbnail_data) {
+                                    function ($constraint) use ($thumbnail_data): void {
                                         $constraint->aspectRatio();
                                         if (!($thumbnail_data->upsize ?? true)) {
                                             $constraint->upsize();
@@ -388,7 +384,7 @@ class VoyagerMediaController extends Controller
         $watermark = Image::make(Storage::disk($this->filesystem)->path($options->source));
         // Resize watermark
         $width = $image->width() * (($options->size ?? 15) / 100);
-        $watermark->resize($width, null, function ($constraint) {
+        $watermark->resize($width, null, function ($constraint): void {
             $constraint->aspectRatio();
         });
 

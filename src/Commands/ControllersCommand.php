@@ -71,7 +71,7 @@ class ControllersCommand extends Command
             return $this->error('The controllers namespace must start with your application namespace: '.$appNamespace);
         }
 
-        $location = str_replace('\\', DIRECTORY_SEPARATOR, substr($namespace, strlen($appNamespace)));
+        $location = str_replace('\\', DIRECTORY_SEPARATOR, substr((string) $namespace, strlen($appNamespace)));
 
         if (!$this->filesystem->isDirectory(app_path($location))) {
             $this->filesystem->makeDirectory(app_path($location));

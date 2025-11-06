@@ -113,7 +113,7 @@ class Translator implements ArrayAccess, JsonSerializable
     {
         return $this->model->getRelation('translations')
             ->where('column_name', $key)
-            ->where('locale', $locale ? $locale : $this->locale)
+            ->where('locale', $locale ?: $this->locale)
             ->first();
     }
 
@@ -124,7 +124,7 @@ class Translator implements ArrayAccess, JsonSerializable
 
     protected function translateAttribute($attribute, $locale = null, $fallback = true)
     {
-        list($value, $locale, $exists) = $this->model->getTranslatedAttributeMeta($attribute, $locale, $fallback);
+        [$value, $locale, $exists] = $this->model->getTranslatedAttributeMeta($attribute, $locale, $fallback);
 
         $this->attributes[$attribute] = [
             'value'    => $value,
@@ -282,9 +282,7 @@ class Translator implements ArrayAccess, JsonSerializable
             ->where('locale', $locale)
             ->delete();
 
-        $this->model->setRelation('translations', $translations->filter(function ($translation) use ($key, $locale) {
-            return $translation->column_name != $key && $translation->locale != $locale;
-        }));
+        $this->model->setRelation('translations', $translations->filter(fn($translation) => $translation->column_name != $key && $translation->locale != $locale));
 
         $this->attributes[$key]['value'] = null;
         $this->attributes[$key]['exists'] = false;
@@ -306,7 +304,7 @@ class Translator implements ArrayAccess, JsonSerializable
             throw new \Exception('Call to undefined method TCG\Voyager\Translator::'.$method.'()');
         }
 
-        return call_user_func_array([$this, 'runTranslatorMethod'], [$method, $arguments]);
+        return call_user_func_array($this->runTranslatorMethod(...), [$method, $arguments]);
     }
 
     public function runTranslatorMethod($method, array $arguments)
@@ -320,8 +318,6 @@ class Translator implements ArrayAccess, JsonSerializable
 
     public function jsonSerialize()
     {
-        return array_map(function ($array) {
-            return $array['value'];
-        }, $this->getRawAttributes());
+        return array_map(fn($array) => $array['value'], $this->getRawAttributes());
     }
 }

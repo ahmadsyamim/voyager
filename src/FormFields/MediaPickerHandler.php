@@ -16,7 +16,7 @@ class MediaPickerHandler extends AbstractHandler
             if (is_array($dataTypeContent->{$row->field})) {
                 $dataTypeContent->{$row->field} = json_encode($dataTypeContent->{$row->field});
             }
-            json_decode($dataTypeContent->{$row->field});
+            json_decode((string) $dataTypeContent->{$row->field});
             if (json_last_error() == JSON_ERROR_NONE) {
                 $content = json_encode($dataTypeContent->{$row->field});
             } else {
@@ -29,14 +29,10 @@ class MediaPickerHandler extends AbstractHandler
         if (isset($options->base_path)) {
             $options->base_path = str_replace('{uid}', Auth::user()->getKey(), $options->base_path);
             if (Str::contains($options->base_path, '{date:')) {
-                $options->base_path = preg_replace_callback('/\{date:([^\/\}]*)\}/', function ($date) {
-                    return \Carbon\Carbon::now()->format($date[1]);
-                }, $options->base_path);
+                $options->base_path = preg_replace_callback('/\{date:([^\/\}]*)\}/', fn($date) => \Carbon\Carbon::now()->format($date[1]), $options->base_path);
             }
             if (Str::contains($options->base_path, '{random:')) {
-                $options->base_path = preg_replace_callback('/\{random:([0-9]+)\}/', function ($random) {
-                    return Str::random($random[1]);
-                }, $options->base_path);
+                $options->base_path = preg_replace_callback('/\{random:([0-9]+)\}/', fn($random) => Str::random($random[1]), $options->base_path);
             }
             if (!$dataTypeContent->getKey()) {
                 $uuid = (string) Str::uuid();

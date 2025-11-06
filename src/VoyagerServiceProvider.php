@@ -63,13 +63,9 @@ class VoyagerServiceProvider extends ServiceProvider
         $loader = AliasLoader::getInstance();
         $loader->alias('Voyager', VoyagerFacade::class);
 
-        $this->app->singleton('voyager', function () {
-            return new Voyager();
-        });
+        $this->app->singleton('voyager', fn() => new Voyager());
 
-        $this->app->singleton('VoyagerGuard', function () {
-            return config('auth.defaults.guard', 'web');
-        });
+        $this->app->singleton('VoyagerGuard', fn() => config('auth.defaults.guard', 'web'));
 
         $this->loadHelpers();
 
@@ -97,7 +93,7 @@ class VoyagerServiceProvider extends ServiceProvider
     {
         if (config('voyager.user.add_default_role_on_register')) {
             $model = Auth::guard(app('VoyagerGuard'))->getProvider()->getModel();
-            call_user_func($model . '::created', function ($user) use ($model) {
+            call_user_func($model . '::created', function ($user) use ($model): void {
                 if (is_null($user->role_id)) {
                     call_user_func($model . '::findOrFail', $user->id)
                         ->setRole(config('voyager.user.default_role'))
@@ -124,7 +120,7 @@ class VoyagerServiceProvider extends ServiceProvider
 
         $this->registerViewComposers();
 
-        $event->listen('voyager.alerts.collecting', function () {
+        $event->listen('voyager.alerts.collecting', function (): void {
             $this->addStorageSymlinkAlert();
         });
 
@@ -151,7 +147,7 @@ class VoyagerServiceProvider extends ServiceProvider
     protected function registerViewComposers()
     {
         // Register alerts
-        View::composer('voyager::*', function ($view) {
+        View::composer('voyager::*', function ($view): void {
             $view->with('alerts', VoyagerFacade::alerts());
         });
     }
@@ -301,15 +297,13 @@ class VoyagerServiceProvider extends ServiceProvider
 
                 $this->registerPolicies();
             }
-        } catch (\PDOException $e) {
+        } catch (\PDOException) {
             Log::info('No database connection yet in VoyagerServiceProvider loadAuth(). No worries, this is not a problem!');
         }
 
         // Gates
         foreach ($this->gates as $gate) {
-            Gate::define($gate, function ($user) use ($gate) {
-                return $user->hasPermission($gate);
-            });
+            Gate::define($gate, fn($user) => $user->hasPermission($gate));
         }
     }
 

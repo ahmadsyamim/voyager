@@ -144,9 +144,9 @@ return [
         ],
 
         'widgets' => [
-            'TCG\\Voyager\\Widgets\\UserDimmer',
-            'TCG\\Voyager\\Widgets\\PostDimmer',
-            'TCG\\Voyager\\Widgets\\PageDimmer',
+            \TCG\Voyager\Widgets\UserDimmer::class,
+            \TCG\Voyager\Widgets\PostDimmer::class,
+            \TCG\Voyager\Widgets\PageDimmer::class,
         ],
 
     ],

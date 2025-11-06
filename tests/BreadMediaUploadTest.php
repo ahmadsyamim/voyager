@@ -35,7 +35,7 @@ class BreadMediaUploadTest extends TestCase
 
         $page = $this->uploadMedia($images, 'multiple_images');
 
-        $files = json_decode($page->image, true);
+        $files = json_decode((string) $page->image, true);
 
         $this->storage->assertExists($files[0]);
         $this->storage->assertExists($files[1]);
@@ -50,7 +50,7 @@ class BreadMediaUploadTest extends TestCase
 
         $page = $this->uploadMedia($images, 'multiple_images');
 
-        $files = json_decode($page->image, true);
+        $files = json_decode((string) $page->image, true);
 
         $response = $this->post(route('voyager.pages.media.remove'), [
             'id'        => $page->id,
@@ -73,7 +73,7 @@ class BreadMediaUploadTest extends TestCase
 
         $page = $this->uploadMedia($images, 'multiple_images');
 
-        $files = json_decode($page->image, true);
+        $files = json_decode((string) $page->image, true);
 
         $this->delete(route('voyager.pages.destroy', [$page->id]));
 
@@ -84,12 +84,12 @@ class BreadMediaUploadTest extends TestCase
 
     public function testImageWithThumbnailsUpload()
     {
-        $page = $this->uploadMedia([$this->image_one], 'image', json_decode($this->details));
+        $page = $this->uploadMedia([$this->image_one], 'image', json_decode((string) $this->details));
 
-        $details = json_decode($this->details);
+        $details = json_decode((string) $this->details);
 
         foreach ($details->thumbnails as $thumbnail) {
-            $path = preg_replace('/(.*)(\.[\w\d]{2,4})$/', '$1-'.$thumbnail->name.'$2', $page->image);
+            $path = preg_replace('/(.*)(\.[\w\d]{2,4})$/', '$1-'.$thumbnail->name.'$2', (string) $page->image);
 
             $this->storage->assertExists($path);
         }
@@ -99,7 +99,7 @@ class BreadMediaUploadTest extends TestCase
 
     public function testImageWithThumbnailsDelete()
     {
-        $page = $this->uploadMedia([$this->image_one], 'image', json_decode($this->details));
+        $page = $this->uploadMedia([$this->image_one], 'image', json_decode((string) $this->details));
 
         $response = $this->post(route('voyager.pages.media.remove'), [
             'id'        => $page->id,
@@ -109,9 +109,9 @@ class BreadMediaUploadTest extends TestCase
             'filename'  => $page->image,
         ]);
 
-        $details = json_decode($this->details);
+        $details = json_decode((string) $this->details);
         foreach ($details->thumbnails as $thumbnail) {
-            $path = preg_replace('/(.*)(\.[\w\d]{2,4})$/', '$1-'.$thumbnail->name.'$2', $page->image);
+            $path = preg_replace('/(.*)(\.[\w\d]{2,4})$/', '$1-'.$thumbnail->name.'$2', (string) $page->image);
             $this->storage->assertMissing($path);
         }
 
@@ -120,14 +120,14 @@ class BreadMediaUploadTest extends TestCase
 
     public function testImageWithThumbnailsRemoveOnDelete()
     {
-        $page = $this->uploadMedia([$this->image_one], 'image', json_decode($this->details));
+        $page = $this->uploadMedia([$this->image_one], 'image', json_decode((string) $this->details));
 
-        $details = json_decode($this->details);
+        $details = json_decode((string) $this->details);
 
         $this->delete(route('voyager.pages.destroy', [$page->id]));
 
         foreach ($details->thumbnails as $thumbnail) {
-            $path = preg_replace('/(.*)(\.[\w\d]{2,4})$/', '$1-'.$thumbnail->name.'$2', $page->image);
+            $path = preg_replace('/(.*)(\.[\w\d]{2,4})$/', '$1-'.$thumbnail->name.'$2', (string) $page->image);
 
             $this->storage->assertMissing($path);
         }
@@ -137,14 +137,14 @@ class BreadMediaUploadTest extends TestCase
     {
         $images = [$this->image_one, $this->image_two, $this->image_three];
 
-        $page = $this->uploadMedia($images, 'multiple_images', json_decode($this->details));
+        $page = $this->uploadMedia($images, 'multiple_images', json_decode((string) $this->details));
 
-        $files = json_decode($page->image, true);
-        $details = json_decode($this->details);
+        $files = json_decode((string) $page->image, true);
+        $details = json_decode((string) $this->details);
 
         foreach ($files as $file) {
             foreach ($details->thumbnails as $thumbnail) {
-                $path = preg_replace('/(.*)(\.[\w\d]{2,4})$/', '$1-'.$thumbnail->name.'$2', $file);
+                $path = preg_replace('/(.*)(\.[\w\d]{2,4})$/', '$1-'.$thumbnail->name.'$2', (string) $file);
 
                 $this->storage->assertExists($path);
             }
@@ -157,9 +157,9 @@ class BreadMediaUploadTest extends TestCase
     {
         $images = [$this->image_one, $this->image_two, $this->image_three];
 
-        $page = $this->uploadMedia($images, 'multiple_images', json_decode($this->details));
+        $page = $this->uploadMedia($images, 'multiple_images', json_decode((string) $this->details));
 
-        $files = json_decode($page->image, true);
+        $files = json_decode((string) $page->image, true);
 
         $response = $this->post(route('voyager.pages.media.remove'), [
             'id'        => $page->id,
@@ -169,11 +169,11 @@ class BreadMediaUploadTest extends TestCase
             'filename'  => $files[1],
         ]);
 
-        $details = json_decode($this->details);
+        $details = json_decode((string) $this->details);
 
         foreach ($files as $file) {
             foreach ($details->thumbnails as $thumbnail) {
-                $path = preg_replace('/(.*)(\.[\w\d]{2,4})$/', '$1-'.$thumbnail->name.'$2', $file);
+                $path = preg_replace('/(.*)(\.[\w\d]{2,4})$/', '$1-'.$thumbnail->name.'$2', (string) $file);
 
                 if ($file == $files[1]) {
                     $this->storage->assertMissing($path);
@@ -190,16 +190,16 @@ class BreadMediaUploadTest extends TestCase
     {
         $images = [$this->image_one, $this->image_two, $this->image_three];
 
-        $page = $this->uploadMedia($images, 'multiple_images', json_decode($this->details));
+        $page = $this->uploadMedia($images, 'multiple_images', json_decode((string) $this->details));
 
-        $files = json_decode($page->image, true);
-        $details = json_decode($this->details);
+        $files = json_decode((string) $page->image, true);
+        $details = json_decode((string) $this->details);
 
         $this->delete(route('voyager.pages.destroy', [$page->id]));
 
         foreach ($files as $file) {
             foreach ($details->thumbnails as $thumbnail) {
-                $path = preg_replace('/(.*)(\.[\w\d]{2,4})$/', '$1-'.$thumbnail->name.'$2', $file);
+                $path = preg_replace('/(.*)(\.[\w\d]{2,4})$/', '$1-'.$thumbnail->name.'$2', (string) $file);
 
                 $this->storage->assertMissing($path);
             }
@@ -210,7 +210,7 @@ class BreadMediaUploadTest extends TestCase
     {
         $page = $this->uploadMedia([$this->file], 'file');
 
-        $file = json_decode($page->image, true);
+        $file = json_decode((string) $page->image, true);
         $this->storage->assertExists($file[0]['download_link']);
 
         $this->delete(route('voyager.pages.destroy', [$page->id]));
@@ -220,7 +220,7 @@ class BreadMediaUploadTest extends TestCase
     {
         $page = $this->uploadMedia([$this->file], 'file');
 
-        $file = json_decode($page->image, true);
+        $file = json_decode((string) $page->image, true);
 
         $this->call('POST', route('voyager.pages.media.remove'), [
             'id'        => $page->id,
@@ -245,7 +245,7 @@ class BreadMediaUploadTest extends TestCase
 
         $page = $this->uploadMedia([$this->file, $this->file_two], 'file', json_decode($validation));
 
-        $file = json_decode($page->image, true);
+        $file = json_decode((string) $page->image, true);
 
         $this->storage->assertExists($file[0]['download_link']);
         $this->storage->assertExists($file[1]['download_link']);
@@ -259,7 +259,7 @@ class BreadMediaUploadTest extends TestCase
 
         $this->delete(route('voyager.pages.destroy', [$page->id]));
 
-        $file = json_decode($page->image, true);
+        $file = json_decode((string) $page->image, true);
         $this->storage->assertMissing($file[0]['download_link']);
     }
 
@@ -282,7 +282,7 @@ class BreadMediaUploadTest extends TestCase
 
         $page = Page::where('slug', $page->slug)->firstOrFail();
 
-        $file = json_decode($page->image, true);
+        $file = json_decode((string) $page->image, true);
 
         $this->storage->assertExists($file[0]['download_link']);
         $this->storage->assertExists($file[1]['download_link']);

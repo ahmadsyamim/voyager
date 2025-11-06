@@ -40,14 +40,12 @@ class EventTest extends TestCase
             'description'           => 'This is a toast',
         ]);
 
-        Event::assertDispatched(BreadAdded::class, function ($event) {
-            return $event->dataType->name === 'Toast'
-                || $event->dataType->slug === 'toast'
-                || $event->dataType->display_name_singular === 'toast'
-                || $event->dataType->display_name_plural === 'toasts'
-                || $event->dataType->icon === 'fa fa-toast'
-                || $event->dataType->description === 'This is a toast';
-        });
+        Event::assertDispatched(BreadAdded::class, fn($event) => $event->dataType->name === 'Toast'
+            || $event->dataType->slug === 'toast'
+            || $event->dataType->display_name_singular === 'toast'
+            || $event->dataType->display_name_plural === 'toasts'
+            || $event->dataType->icon === 'fa fa-toast'
+            || $event->dataType->description === 'This is a toast');
     }
 
     public function testBreadUpdatedEvent()
@@ -76,14 +74,12 @@ class EventTest extends TestCase
             'description'           => 'This is a test',
         ]);
 
-        Event::assertDispatched(BreadUpdated::class, function ($event) {
-            return $event->dataType->name === 'Test'
-                || $event->dataType->slug === 'test'
-                || $event->dataType->display_name_singular === 'test'
-                || $event->dataType->display_name_plural === 'tests'
-                || $event->dataType->icon === 'fa fa-test'
-                || $event->dataType->description === 'This is a test';
-        });
+        Event::assertDispatched(BreadUpdated::class, fn($event) => $event->dataType->name === 'Test'
+            || $event->dataType->slug === 'test'
+            || $event->dataType->display_name_singular === 'test'
+            || $event->dataType->display_name_plural === 'tests'
+            || $event->dataType->icon === 'fa fa-test'
+            || $event->dataType->description === 'This is a test');
     }
 
     public function testBreadDeletedEvent()
@@ -221,7 +217,7 @@ class EventTest extends TestCase
         Event::assertDispatched(FileDeleted::class);
     }
 
-    public function testTableAddedEvent()
+    public function testTableAddedEvent(): never
     {
         $this->markTestSkipped('Skipping this test as Doctrine DBAL is not supported in Laravel 11');
 
@@ -248,7 +244,7 @@ class EventTest extends TestCase
         Event::assertDispatched(TableAdded::class);
     }
 
-    public function testTableUpdatedEvent()
+    public function testTableUpdatedEvent(): never
     {
         $this->markTestSkipped('Skipping this test as Doctrine DBAL is not supported in Laravel 11');
 
@@ -296,7 +292,7 @@ class EventTest extends TestCase
         Event::assertDispatched(TableUpdated::class);
     }
 
-    public function testTableDeletedEvent()
+    public function testTableDeletedEvent(): never
     {
         $this->markTestSkipped('Skipping this test as Doctrine DBAL is not supported in Laravel 11');
 

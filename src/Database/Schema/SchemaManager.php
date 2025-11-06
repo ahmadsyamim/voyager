@@ -48,9 +48,7 @@ abstract class SchemaManager
     public static function listTableDetails($tableName)
     {
         $columns = Schema::getColumnListing($tableName);
-        $columnDetails = collect($columns)->mapWithKeys(function ($column) use ($tableName) {
-            return [$column => static::getColumnDetails($tableName, $column)];
-        });
+        $columnDetails = collect($columns)->mapWithKeys(fn($column) => [$column => static::getColumnDetails($tableName, $column)]);
 
         $indexes = static::getTableIndexes($tableName);
         $foreignKeys = static::getTableForeignKeys($tableName);
@@ -74,7 +72,7 @@ abstract class SchemaManager
                 'field' => $column,
                 'type' => $columnDetails['type'],
                 'null' => $columnDetails['nullable'],
-                'key' => !empty($indexes) ? substr(reset($indexes)['type'], 0, 3) : null,
+                'key' => !empty($indexes) ? substr((string) reset($indexes)['type'], 0, 3) : null,
                 'default' => $columnDetails['default'],
                 'extra' => $columnDetails['auto_increment'] ? 'auto_increment' : '',
                 'indexes' => $indexes,
@@ -90,7 +88,7 @@ abstract class SchemaManager
     public static function createTable($table)
     {
         if ($table instanceof Blueprint) {
-            Schema::create($table->getTable(), function (Blueprint $blueprint) use ($table) {
+            Schema::create($table->getTable(), function (Blueprint $blueprint) use ($table): void {
                 foreach ($table->getColumns() as $column) {
                     $blueprint->addColumn(
                         $column->getType()->getName(),
@@ -132,9 +130,7 @@ abstract class SchemaManager
     protected static function getColumnIndexes($table, $column)
     {
         $tableIndexes = static::getTableIndexes($table);
-        return collect($tableIndexes)->filter(function ($index) use ($column) {
-            return in_array($column, $index['columns']);
-        })->toArray();
+        return collect($tableIndexes)->filter(fn($index) => in_array($column, $index['columns']))->toArray();
     }
 
     protected static function getTableForeignKeys($table)
@@ -148,13 +144,10 @@ abstract class SchemaManager
 
         // Check if the connection supports the getTables method
         if (method_exists($connection->getSchemaBuilder(), 'getTables')) {
-            switch (DB::connection()->getDriverName()) {
-                case 'mysql':
-                    $tables = $connection->getSchemaBuilder()->getTables(DB::connection()->getDatabaseName());
-                    break;
-                default:
-                    $tables = $connection->getSchemaBuilder()->getTables();
-            }
+            $tables = match (DB::connection()->getDriverName()) {
+                'mysql' => $connection->getSchemaBuilder()->getTables(DB::connection()->getDatabaseName()),
+                default => $connection->getSchemaBuilder()->getTables(),
+            };
 
             return collect($tables)->pluck('name')->values()->all();
         }

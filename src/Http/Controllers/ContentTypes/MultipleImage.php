@@ -55,7 +55,7 @@ class MultipleImage extends BaseType
             $image = $image->resize(
                 $resize_width,
                 $resize_height,
-                function (Constraint $constraint) {
+                function (Constraint $constraint): void {
                     $constraint->aspectRatio();
                     if (isset($this->options->upsize) && !$this->options->upsize) {
                         $constraint->upsize();
@@ -73,11 +73,11 @@ class MultipleImage extends BaseType
                         $thumb_resize_height = $resize_height;
 
                         if ($thumb_resize_width != null && $thumb_resize_width != 'null') {
-                            $thumb_resize_width = $thumb_resize_width * $scale;
+                            $thumb_resize_width *= $scale;
                         }
 
                         if ($thumb_resize_height != null && $thumb_resize_height != 'null') {
-                            $thumb_resize_height = $thumb_resize_height * $scale;
+                            $thumb_resize_height *= $scale;
                         }
 
                         $image = InterventionImage::make($file)
@@ -85,7 +85,7 @@ class MultipleImage extends BaseType
                             ->resize(
                                 $thumb_resize_width,
                                 $thumb_resize_height,
-                                function (Constraint $constraint) {
+                                function (Constraint $constraint): void {
                                     $constraint->aspectRatio();
                                     if (isset($this->options->upsize) && !$this->options->upsize) {
                                         $constraint->upsize();

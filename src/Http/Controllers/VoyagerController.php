@@ -55,7 +55,7 @@ class VoyagerController extends Controller
 
         if (in_array($ext, ['jpeg', 'jpg', 'png', 'gif'])) {
             $image = Image::make($file)
-                ->resize($resizeWidth, $resizeHeight, function (Constraint $constraint) {
+                ->resize($resizeWidth, $resizeHeight, function (Constraint $constraint): void {
                     $constraint->aspectRatio();
                     $constraint->upsize();
                 });
@@ -91,7 +91,7 @@ class VoyagerController extends Controller
                 $path = dirname(__DIR__, 3).'/publishable/assets/'. $normalizer->normalizePath(urldecode($request->path));
             }
             
-        } catch (\LogicException $e) {
+        } catch (\LogicException) {
             abort(404);
         }
 

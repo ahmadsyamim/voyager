@@ -112,7 +112,7 @@ class DataType extends Model
                     $dataRow->required = !empty($requestData['field_required_'.$field]);
                     $dataRow->field = $requestData['field_'.$field];
                     $dataRow->type = $requestData['field_input_type_'.$field];
-                    $dataRow->details = json_decode($requestData['field_details_'.$field]);
+                    $dataRow->details = json_decode((string) $requestData['field_details_'.$field]);
                     $dataRow->display_name = $requestData['field_display_name_'.$field];
                     $dataRow->order = intval($requestData['field_order_'.$field]);
 
@@ -176,7 +176,7 @@ class DataType extends Model
         if (isset($requestData['relationships'])) {
             $relationships = $requestData['relationships'];
             if (count($relationships) > 0) {
-                foreach ($relationships as $index => $relationship) {
+                foreach ($relationships as $relationship) {
                     // Push the relationship on the allowed fields
                     array_push($fields, $relationship);
 
@@ -198,7 +198,7 @@ class DataType extends Model
                         'taggable'    => $requestData['relationship_taggable_'.$relationship] ?? '0',
                     ];
 
-                    $details = json_decode($requestData['field_details_'.$relationship], true);
+                    $details = json_decode((string) $requestData['field_details_'.$relationship], true);
                     $merge = array_merge($details, $relationshipDetails);
                     $requestData['field_details_'.$relationship] = json_encode($merge);
                 }

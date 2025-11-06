@@ -17,8 +17,8 @@ class VoyagerTest extends TestCase
     public function testDimmersReturnsCollectionOfConfiguredWidgets()
     {
         Config::set('voyager.dashboard.widgets', [
-            'TCG\\Voyager\\Tests\\Stubs\\Widgets\\AccessibleDimmer',
-            'TCG\\Voyager\\Tests\\Stubs\\Widgets\\AccessibleDimmer',
+            \TCG\Voyager\Tests\Stubs\Widgets\AccessibleDimmer::class,
+            \TCG\Voyager\Tests\Stubs\Widgets\AccessibleDimmer::class,
         ]);
 
         $dimmers = Voyager::dimmers();
@@ -35,9 +35,9 @@ class VoyagerTest extends TestCase
     public function testDimmersReturnsCollectionOfConfiguredWidgetsWhichShouldBeDisplayed()
     {
         Config::set('voyager.dashboard.widgets', [
-            'TCG\\Voyager\\Tests\\Stubs\\Widgets\\AccessibleDimmer',
-            'TCG\\Voyager\\Tests\\Stubs\\Widgets\\InAccessibleDimmer',
-            'TCG\\Voyager\\Tests\\Stubs\\Widgets\\InAccessibleDimmer',
+            \TCG\Voyager\Tests\Stubs\Widgets\AccessibleDimmer::class,
+            \TCG\Voyager\Tests\Stubs\Widgets\InAccessibleDimmer::class,
+            \TCG\Voyager\Tests\Stubs\Widgets\InAccessibleDimmer::class,
         ]);
 
         $dimmers = Voyager::dimmers();
@@ -54,11 +54,11 @@ class VoyagerTest extends TestCase
     public function testCreateEnoughDimmerCollectionsToContainAllAvailableDimmers()
     {
         Config::set('voyager.dashboard.widgets', [
-            'TCG\\Voyager\\Tests\\Stubs\\Widgets\\AccessibleDimmer',
-            'TCG\\Voyager\\Tests\\Stubs\\Widgets\\AccessibleDimmer',
-            'TCG\\Voyager\\Tests\\Stubs\\Widgets\\AccessibleDimmer',
-            'TCG\\Voyager\\Tests\\Stubs\\Widgets\\AccessibleDimmer',
-            'TCG\\Voyager\\Tests\\Stubs\\Widgets\\AccessibleDimmer',
+            \TCG\Voyager\Tests\Stubs\Widgets\AccessibleDimmer::class,
+            \TCG\Voyager\Tests\Stubs\Widgets\AccessibleDimmer::class,
+            \TCG\Voyager\Tests\Stubs\Widgets\AccessibleDimmer::class,
+            \TCG\Voyager\Tests\Stubs\Widgets\AccessibleDimmer::class,
+            \TCG\Voyager\Tests\Stubs\Widgets\AccessibleDimmer::class,
         ]);
 
         $dimmers = Voyager::dimmers();

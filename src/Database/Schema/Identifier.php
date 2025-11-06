@@ -11,7 +11,7 @@ abstract class Identifier
 
     public static function validate($identifier, $asset = '')
     {
-        $identifier = trim($identifier);
+        $identifier = trim((string) $identifier);
 
         $validator = Validator::make(['identifier' => $identifier], [
             'identifier' => 'required|regex:'.'/'.static::REGEX.'/',

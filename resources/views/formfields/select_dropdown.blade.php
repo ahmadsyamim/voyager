@@ -42,7 +42,7 @@
             // Try to get default value for the relationship
             // when default is a callable function (ClassName@methodName)
             if ($default != null) {
-                $comps = explode('@', $default);
+                $comps = explode('@', (string) $default);
                 if (count($comps) == 2 && method_exists($comps[0], $comps[1])) {
                     $default = call_user_func([$comps[0], $comps[1]]);
                 }

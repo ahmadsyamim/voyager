@@ -21,11 +21,11 @@ class Menu extends Model
     {
         parent::boot();
 
-        static::saved(function ($model) {
+        static::saved(function ($model): void {
             $model->removeMenuFromCache();
         });
 
-        static::deleted(function ($model) {
+        static::deleted(function ($model): void {
             $model->removeMenuFromCache();
         });
     }
@@ -53,13 +53,11 @@ class Menu extends Model
     public static function display($menuName, $type = null, array $options = [])
     {
         // GET THE MENU - sort collection in blade
-        $menu = \Cache::remember('voyager_menu_'.$menuName, \Carbon\Carbon::now()->addDays(30), function () use ($menuName) {
-            return static::where('name', '=', $menuName)
-            ->with(['parent_items.children' => function ($q) {
-                $q->orderBy('order');
-            }])
-            ->first();
-        });
+        $menu = \Cache::remember('voyager_menu_'.$menuName, \Carbon\Carbon::now()->addDays(30), fn() => static::where('name', '=', $menuName)
+        ->with(['parent_items.children' => function ($q): void {
+            $q->orderBy('order');
+        }])
+        ->first());
 
         // Check for Menu Existence
         if (!isset($menu)) {
@@ -145,9 +143,7 @@ class Menu extends Model
         });
 
         // Filter items by permission
-        $items = $items->filter(function ($item) {
-            return !$item->children->isEmpty() || Auth::user()->can('browse', $item);
-        })->filter(function ($item) {
+        $items = $items->filter(fn($item) => !$item->children->isEmpty() || Auth::user()->can('browse', $item))->filter(function ($item) {
             // Filter out empty menu-items
             if ($item->url == '' && $item->route == '' && $item->children->count() == 0) {
                 return false;

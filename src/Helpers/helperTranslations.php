@@ -34,7 +34,7 @@ if (!function_exists('get_field_translations')) {
 
         if ($stripHtmlTags && $rowType == 'rich_text_box') {
             foreach ($_out as $language => $value) {
-                $_out[$language] = strip_tags($_out[$language]);
+                $_out[$language] = strip_tags((string) $_out[$language]);
             }
         }
 

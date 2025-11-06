@@ -12,33 +12,24 @@ abstract class BaseType
     protected $request;
 
     /**
-     * @var
-     */
-    protected $slug;
-
-    /**
-     * @var
-     */
-    protected $row;
-
-    /**
-     * @var
-     */
-    protected $options;
-
-    /**
      * Password constructor.
      *
      * @param Request $request
      * @param $slug
      * @param $row
      */
-    public function __construct(Request $request, $slug, $row, $options)
+    public function __construct(Request $request, /**
+     * @var
+     */
+    protected $slug, /**
+     * @var
+     */
+    protected $row, /**
+     * @var
+     */
+    protected $options)
     {
         $this->request = $request;
-        $this->slug = $slug;
-        $this->row = $row;
-        $this->options = $options;
     }
 
     /**

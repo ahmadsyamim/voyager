@@ -18,11 +18,9 @@ class ViewEventTest extends TestCase
         app('view')->addLocation(__DIR__.'/views');
 
         // Add test route
-        $this->app['router']->get('test', function () {
-            return Voyager::view('test', [
-                'foo' => 'bar',
-            ]);
-        });
+        $this->app['router']->get('test', fn() => Voyager::view('test', [
+            'foo' => 'bar',
+        ]));
     }
 
     public function testRenderingViewTriggersEvent()
@@ -32,7 +30,7 @@ class ViewEventTest extends TestCase
             ->see('This is a test');
 
         // Add event on test view
-        Voyager::onLoadingView('test', function ($name, array $parameters) {
+        Voyager::onLoadingView('test', function ($name, array $parameters): void {
             $this->eventTrigered = true;
 
             $this->assertEquals('test', $name);
@@ -50,7 +48,7 @@ class ViewEventTest extends TestCase
     public function testOverwritingViewName()
     {
         // Add event on test view
-        Voyager::onLoadingView('test', function (&$name, array $parameters) {
+        Voyager::onLoadingView('test', function (&$name, array $parameters): void {
             $name = 'foo';
         });
 
@@ -62,7 +60,7 @@ class ViewEventTest extends TestCase
     public function testOverwritingViewNameAndParameters()
     {
         // Add event on test view
-        Voyager::onLoadingView('test', function (&$name, array &$parameters) {
+        Voyager::onLoadingView('test', function (&$name, array &$parameters): void {
             $name = 'hello';
             $parameters['name'] = 'Mark';
         });

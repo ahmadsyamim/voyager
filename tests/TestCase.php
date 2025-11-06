@@ -38,8 +38,8 @@ class TestCase extends OrchestraTestCase
             );
         }
 
-        $this->app->make('Illuminate\Contracts\Http\Kernel')->pushMiddleware('Illuminate\Session\Middleware\StartSession');
-        $this->app->make('Illuminate\Contracts\Http\Kernel')->pushMiddleware('Illuminate\View\Middleware\ShareErrorsFromSession');
+        $this->app->make(\Illuminate\Contracts\Http\Kernel::class)->pushMiddleware(\Illuminate\Session\Middleware\StartSession::class);
+        $this->app->make(\Illuminate\Contracts\Http\Kernel::class)->pushMiddleware(\Illuminate\View\Middleware\ShareErrorsFromSession::class);
 
         $this->install();
     }

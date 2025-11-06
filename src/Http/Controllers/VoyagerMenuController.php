@@ -102,7 +102,7 @@ class VoyagerMenuController extends Controller
 
     public function order_item(Request $request)
     {
-        $menuItemOrder = json_decode($request->input('order'));
+        $menuItemOrder = json_decode((string) $request->input('order'));
 
         $this->orderMenu($menuItemOrder, null);
     }
@@ -149,7 +149,7 @@ class VoyagerMenuController extends Controller
      */
     protected function prepareMenuTranslations(&$data)
     {
-        $trans = json_decode($data['title_i18n'], true);
+        $trans = json_decode((string) $data['title_i18n'], true);
 
         // Set field value with the default locale
         $data['title'] = $trans[config('voyager.multilingual.default', 'en')];

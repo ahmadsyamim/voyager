@@ -8,13 +8,8 @@ class Alert
 {
     protected $components;
 
-    protected $name;
-    protected $type;
-
-    public function __construct($name, $type = 'default')
+    public function __construct(protected $name, protected $type = 'default')
     {
-        $this->name = $name;
-        $this->type = $type;
     }
 
     public function addComponent(ComponentInterface $component)

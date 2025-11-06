@@ -101,7 +101,7 @@ class VoyagerSettingsController extends Controller
                 continue;
             }
 
-            $key = preg_replace('/^'.Str::slug($setting->group).'./i', '', $setting->key);
+            $key = preg_replace('/^'.Str::slug($setting->group).'./i', '', (string) $setting->key);
 
             $setting->group = $request->input(str_replace('.', '_', $setting->key).'_group');
             $setting->key = implode('.', [Str::slug($setting->group), $key]);

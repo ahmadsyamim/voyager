@@ -4,13 +4,8 @@ namespace TCG\Voyager\Actions;
 
 abstract class AbstractAction implements ActionInterface
 {
-    protected $dataType;
-    protected $data;
-
-    public function __construct($dataType, $data)
+    public function __construct(protected $dataType, protected $data)
     {
-        $this->dataType = $dataType;
-        $this->data = $data;
     }
 
     public function getDataType()
@@ -23,7 +18,7 @@ abstract class AbstractAction implements ActionInterface
 
     public function getRoute($key)
     {
-        if (method_exists($this, $method = 'get'.ucfirst($key).'Route')) {
+        if (method_exists($this, $method = 'get'.ucfirst((string) $key).'Route')) {
             return $this->$method();
         } else {
             return $this->getDefaultRoute();

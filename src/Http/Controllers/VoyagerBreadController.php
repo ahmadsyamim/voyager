@@ -54,7 +54,7 @@ class VoyagerBreadController extends Controller
 
         $data = $this->prepopulateBreadInfo($table);
         $data['fieldOptions'] = SchemaManager::describeTable(
-            (isset($dataType) && strlen($dataType->model_name) != 0)
+            (isset($dataType) && strlen((string) $dataType->model_name) != 0)
             ? DB::getTablePrefix().app($dataType->model_name)->getTable()
             : DB::getTablePrefix().$table
         );
@@ -123,7 +123,7 @@ class VoyagerBreadController extends Controller
         $dataType = Voyager::model('DataType')->whereName($table)->first();
 
         $fieldOptions = SchemaManager::describeTable(
-            (strlen($dataType->model_name) != 0)
+            (strlen((string) $dataType->model_name) != 0)
             ? DB::getTablePrefix().app($dataType->model_name)->getTable()
             : DB::getTablePrefix().$dataType->name
         );
@@ -215,11 +215,7 @@ class VoyagerBreadController extends Controller
     {
         $reflection = new ReflectionClass($model_name);
 
-        return collect($reflection->getMethods())->filter(function ($method) {
-            return Str::startsWith($method->name, 'scope');
-        })->whereNotIn('name', ['scopeWithTranslations', 'scopeWithTranslation', 'scopeWhereTranslation'])->transform(function ($method) {
-            return lcfirst(Str::replaceFirst('scope', '', $method->name));
-        });
+        return collect($reflection->getMethods())->filter(fn($method) => Str::startsWith($method->name, 'scope'))->whereNotIn('name', ['scopeWithTranslations', 'scopeWithTranslation', 'scopeWhereTranslation'])->transform(fn($method) => lcfirst(Str::replaceFirst('scope', '', $method->name)));
     }
 
     // ************************************************************

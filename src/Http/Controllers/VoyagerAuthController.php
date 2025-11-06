@@ -11,7 +11,7 @@ class VoyagerAuthController extends Controller
 {
     use AuthenticatesUsers;
 
-    public function login()
+    public function login(\Illuminate\Http\Request $request)
     {
         if ($this->guard()->user()) {
             return redirect()->route('voyager.dashboard');

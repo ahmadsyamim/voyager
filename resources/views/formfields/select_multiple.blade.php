@@ -15,7 +15,7 @@ $dataTypeContent->{$row->field} = json_decode($dataTypeContent->{$row->field})
             if (isset($dataTypeContent) && method_exists($dataTypeContent, $relationshipListMethod)) {
                 $relationshipOptions = $dataTypeContent->$relationshipListMethod();
             } else {
-                $relationshipClass = get_class(app($dataType->model_name)->{\Illuminate\Support\Str::camel($row->field)}()->getRelated());
+                $relationshipClass = app($dataType->model_name)->{\Illuminate\Support\Str::camel($row->field)}()->getRelated()::class;
                 $relationshipOptions = $relationshipClass::all();
             }
             ?>

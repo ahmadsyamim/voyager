@@ -30,7 +30,7 @@ class MenuItemPolicy extends BasePolicy
         }
 
         $regex = str_replace('/', '\/', preg_quote(route('voyager.dashboard')));
-        $slug = preg_replace('/'.$regex.'/', '', $model->link(true));
+        $slug = preg_replace('/'.$regex.'/', '', (string) $model->link(true));
         $slug = str_replace('/', '', $slug);
 
         if ($str = self::$datatypes->get($slug)) {

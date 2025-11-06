@@ -27,7 +27,7 @@ class PagesTableSeeder extends Seeder
                 'display_name_singular' => __('voyager::seeders.data_types.page.singular'),
                 'display_name_plural'   => __('voyager::seeders.data_types.page.plural'),
                 'icon'                  => 'voyager-file-text',
-                'model_name'            => 'TCG\\Voyager\\Models\\Page',
+                'model_name'            => \TCG\Voyager\Models\Page::class,
                 'controller'            => '',
                 'generate_permissions'  => 1,
                 'description'           => '',

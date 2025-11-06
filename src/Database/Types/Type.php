@@ -56,9 +56,7 @@ abstract class Type extends DoctrineType
             static::getPlatformTypeMapping()
         );
 
-        static::$platformTypes = static::$platformTypes->map(function ($type) {
-            return static::toArray(new $type());
-        })->groupBy('category');
+        static::$platformTypes = static::$platformTypes->map(fn($type) => static::toArray(new $type()))->groupBy('category');
 
         return static::$platformTypes;
     }
@@ -83,7 +81,7 @@ abstract class Type extends DoctrineType
         }
 
         $platform = SchemaManager::getDatabaseConnection()->getDriverName();
-        $platformName = ucfirst($platform);
+        $platformName = ucfirst((string) $platform);
 
         $customTypes = array_merge(
             static::getPlatformCustomTypes('Common'),
@@ -142,11 +140,9 @@ abstract class Type extends DoctrineType
 
             if ($types == '*') {
                 $types = static::getAllTypes()->toArray();
-            } elseif (strpos($types, '*') !== false) {
+            } elseif (str_contains($types, '*')) {
                 $searchType = str_replace('*', '', $types);
-                $types = static::getAllTypes()->filter(function ($type) use ($searchType) {
-                    return strpos($type, $searchType) !== false;
-                })->toArray();
+                $types = static::getAllTypes()->filter(fn($type) => str_contains((string) $type, $searchType))->toArray();
             } else {
                 $types = [$types];
             }

@@ -25,15 +25,15 @@ class MenuItem extends Model
     {
         parent::boot();
 
-        static::created(function ($model) {
+        static::created(function ($model): void {
             $model->menu->removeMenuFromCache();
         });
 
-        static::saved(function ($model) {
+        static::saved(function ($model): void {
             $model->menu->removeMenuFromCache();
         });
 
-        static::deleted(function ($model) {
+        static::deleted(function ($model): void {
             $model->menu->removeMenuFromCache();
         });
     }

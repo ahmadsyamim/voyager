@@ -91,7 +91,7 @@ class Voyager
             $object = app($object);
         }
 
-        $class = get_class($object);
+        $class = $object::class;
 
         if (isset($this->models[Str::studly($name)]) && !$object instanceof $this->models[Str::studly($name)]) {
             throw new \Exception("[{$class}] must be instance of [{$this->models[Str::studly($name)]}].");
@@ -133,9 +133,7 @@ class Voyager
 
     public function afterFormFields($row, $dataType, $dataTypeContent)
     {
-        return collect($this->afterFormFields)->filter(function ($after) use ($row, $dataType, $dataTypeContent) {
-            return $after->visible($row, $dataType, $dataTypeContent, $row->details);
-        });
+        return collect($this->afterFormFields)->filter(fn($after) => $after->visible($row, $dataType, $dataTypeContent, $row->details));
     }
 
     public function addFormField($handler)
@@ -165,9 +163,7 @@ class Voyager
         $connection = config('database.default');
         $driver = config("database.connections.{$connection}.driver", 'mysql');
 
-        return collect($this->formFields)->filter(function ($after) use ($driver) {
-            return $after->supports($driver);
-        });
+        return collect($this->formFields)->filter(fn($after) => $after->supports($driver));
     }
 
     public function addAction($action)
@@ -240,7 +236,7 @@ class Voyager
             }
 
             foreach (self::model('Setting')->orderBy('order')->get() as $setting) {
-                $keys = explode('.', $setting->key);
+                $keys = explode('.', (string) $setting->key);
                 @$this->setting_cache[$keys[0]][$keys[1]] = $setting->value;
 
                 if ($globalCache) {
@@ -249,7 +245,7 @@ class Voyager
             }
         }
 
-        $parts = explode('.', $key);
+        $parts = explode('.', (string) $key);
 
         if (count($parts) == 2) {
             return @$this->setting_cache[$parts[0]][$parts[1]] ?: $default;
@@ -305,7 +301,7 @@ class Voyager
         if ($this->filesystem->exists(base_path('composer.lock'))) {
             // Get the composer.lock file
             $file = json_decode(
-                $this->filesystem->get(base_path('composer.lock'))
+                (string) $this->filesystem->get(base_path('composer.lock'))
             );
 
             // Loop through all the packages and get the version of voyager
@@ -341,7 +337,7 @@ class Voyager
             return false;
         }
 
-        $traits = class_uses_recursive(get_class($model));
+        $traits = class_uses_recursive($model::class);
 
         return in_array(Translatable::class, $traits);
     }

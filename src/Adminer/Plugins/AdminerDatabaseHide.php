@@ -13,7 +13,7 @@ class AdminerDatabaseHide
 
     function databases($flush = true)
     {
-        $return = array();
+        $return = [];
         foreach (get_databases($flush) as $db) {
             if (strtolower($db) == env('DB_DATABASE', '')) {
                 $return[] = $db;

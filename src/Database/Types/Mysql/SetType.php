@@ -14,14 +14,12 @@ class SetType extends Type
     {
         throw new \Exception('Set type is not supported');
         // we're going to store SET values in the comment since DBAL doesn't support
-        $allowed = explode(',', trim($fieldDeclaration['comment']));
+        $allowed = explode(',', trim((string) $fieldDeclaration['comment']));
 
         $pdo = DB::connection()->getPdo();
 
         // trim the values
-        $fieldDeclaration['allowed'] = array_map(function ($value) use ($pdo) {
-            return $pdo->quote(trim($value));
-        }, $allowed);
+        $fieldDeclaration['allowed'] = array_map(fn($value) => $pdo->quote(trim((string) $value)), $allowed);
 
         return 'set('.implode(', ', $field['allowed']).')';
     }

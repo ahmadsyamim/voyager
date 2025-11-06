@@ -187,7 +187,7 @@ class VoyagerDatabaseController extends Controller
         }
 
         $oldTable = old('table');
-        $db->oldTable = $oldTable ? $oldTable : json_encode(null);
+        $db->oldTable = $oldTable ?: json_encode(null);
         $db->action = $action;
         $db->identifierRegex = Identifier::REGEX;
         $db->platform = DB::connection()->getDriverName();
@@ -223,7 +223,7 @@ class VoyagerDatabaseController extends Controller
             $after = $request->after;
             if ($after == null) {
                 // SET COLUMN TO THE TOP
-                DB::query("ALTER $table MyTable CHANGE COLUMN $column FIRST");
+                DB::query();
             }
 
             return 1;

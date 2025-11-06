@@ -43,7 +43,7 @@ class Image extends BaseType
             $image = $image->resize(
                 $resize_width,
                 $resize_height,
-                function (Constraint $constraint) {
+                function (Constraint $constraint): void {
                     $constraint->aspectRatio();
                     if (isset($this->options->upsize) && !$this->options->upsize) {
                         $constraint->upsize();
@@ -79,7 +79,7 @@ class Image extends BaseType
                             ->resize(
                                 $thumb_resize_width,
                                 $thumb_resize_height,
-                                function (Constraint $constraint) {
+                                function (Constraint $constraint): void {
                                     $constraint->aspectRatio();
                                     if (isset($this->options->upsize) && !$this->options->upsize) {
                                         $constraint->upsize();

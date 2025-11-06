@@ -32,7 +32,7 @@ class DatabaseUpdater
     public static function update($table)
     {
         if (!is_array($table)) {
-            $table = json_decode($table, true);
+            $table = json_decode((string) $table, true);
         }
 
         if (!SchemaManager::tableExists($table['oldName'])) {

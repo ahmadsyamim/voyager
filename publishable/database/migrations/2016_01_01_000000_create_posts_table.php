@@ -13,7 +13,7 @@ class CreatePostsTable extends Migration
     public function up()
     {
         // Create table for storing roles
-        Schema::create('posts', function (Blueprint $table) {
+        Schema::create('posts', function (Blueprint $table): void {
             $table->increments('id');
             $table->integer('author_id');
             $table->integer('category_id')->nullable();

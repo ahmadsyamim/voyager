@@ -8,12 +8,8 @@ class TableDeleted
 {
     use SerializesModels;
 
-    public $name;
-
-    public function __construct($name)
+    public function __construct(public $name)
     {
-        $this->name = $name;
-
-        event(new TableChanged($name, 'Deleted'));
+        event(new TableChanged($this->name, 'Deleted'));
     }
 }

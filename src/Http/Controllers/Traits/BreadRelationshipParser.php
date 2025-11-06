@@ -11,7 +11,7 @@ trait BreadRelationshipParser
     protected function removeRelationshipField(DataType $dataType, $bread_type = 'browse')
     {
         $forget_keys = [];
-        foreach ($dataType->{$bread_type.'Rows'} as $key => $row) {
+        foreach ($dataType->{$bread_type.'Rows'} as $row) {
             if ($row->type == 'relationship') {
                 if ($row->details->type == 'belongsTo') {
                     $relationshipField = @$row->details->column;

@@ -75,7 +75,7 @@ class BasePolicy
      */
     protected function checkPermission(User $user, $model, $action)
     {
-        $model_name = get_class($model);
+        $model_name = $model::class;
         if (!isset(self::$datatypes[$model_name])) {
             $dataType = Voyager::model('DataType');
             self::$datatypes[$model_name] = $dataType->where('model_name', $model_name)->first();

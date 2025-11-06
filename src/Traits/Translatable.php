@@ -55,8 +55,8 @@ trait Translatable
             $fallback = config('app.fallback_locale', 'en');
         }
 
-        $query->with(['translations' => function (Relation $query) use ($locale, $fallback) {
-            $query->where(function ($q) use ($locale, $fallback) {
+        $query->with(['translations' => function (Relation $query) use ($locale, $fallback): void {
+            $query->where(function ($q) use ($locale, $fallback): void {
                 $q->where('locale', $locale);
 
                 if ($fallback !== false) {
@@ -84,12 +84,12 @@ trait Translatable
             $fallback = config('app.fallback_locale', 'en');
         }
 
-        $query->with(['translations' => function (Relation $query) use ($locales, $fallback) {
+        $query->with(['translations' => function (Relation $query) use ($locales, $fallback): void {
             if (is_null($locales)) {
                 return;
             }
 
-            $query->where(function ($q) use ($locales, $fallback) {
+            $query->where(function ($q) use ($locales, $fallback): void {
                 if (is_array($locales)) {
                     $q->whereIn('locale', $locales);
                 } else {
@@ -136,7 +136,7 @@ trait Translatable
             return $this->getAttributeValue($attribute);
         }
 
-        list($value) = $this->getTranslatedAttributeMeta($attribute, $language, $fallback);
+        [$value] = $this->getTranslatedAttributeMeta($attribute, $language, $fallback);
 
         return $value;
     }
@@ -283,13 +283,9 @@ trait Translatable
             Translation::where('table_name', $table)
             ->where('column_name', $field)
             ->where('value', $operator, $value)
-            ->when(!is_null($locales), function ($query) use ($locales) {
-                return $query->whereIn('locale', $locales);
-            })
+            ->when(!is_null($locales), fn($query) => $query->whereIn('locale', $locales))
             ->pluck('foreign_key')
-        )->when($default, function ($query) use ($field, $operator, $value) {
-            return $query->orWhere($field, $operator, $value);
-        });
+        )->when($default, fn($query) => $query->orWhere($field, $operator, $value));
     }
 
     public function hasTranslatorMethod($name)
@@ -392,7 +388,7 @@ trait Translatable
             throw new Exception('Invalid Translatable field '.$field);
         }
 
-        $trans = json_decode($requestData[$field.'_i18n'], true);
+        $trans = json_decode((string) $requestData[$field.'_i18n'], true);
 
         // Set the default local value
         $requestData['display_name'] = $trans[config('voyager.multilingual.default', 'en')];
@@ -417,8 +413,8 @@ trait Translatable
      */
     public function saveTranslations($translations)
     {
-        foreach ($translations as $field => $locales) {
-            foreach ($locales as $locale => $translation) {
+        foreach ($translations as $locales) {
+            foreach ($locales as $translation) {
                 $translation->save();
             }
         }

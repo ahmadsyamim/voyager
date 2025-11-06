@@ -27,7 +27,7 @@ class CategoriesTableSeeder extends Seeder
                 'display_name_singular' => __('voyager::seeders.data_types.category.singular'),
                 'display_name_plural'   => __('voyager::seeders.data_types.category.plural'),
                 'icon'                  => 'voyager-categories',
-                'model_name'            => 'TCG\\Voyager\\Models\\Category',
+                'model_name'            => \TCG\Voyager\Models\Category::class,
                 'controller'            => '',
                 'generate_permissions'  => 1,
                 'description'           => '',

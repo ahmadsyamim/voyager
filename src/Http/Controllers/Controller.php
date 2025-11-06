@@ -36,7 +36,7 @@ abstract class Controller extends BaseController
         if (isset($this->slug)) {
             $slug = $this->slug;
         } else {
-            $slug = explode('.', $request->route()->getName())[1];
+            $slug = explode('.', (string) $request->route()->getName())[1];
         }
 
         return $slug;
@@ -162,9 +162,9 @@ abstract class Controller extends BaseController
             $old_path = $request->session()->get($slug.'_path');
             $uuid = $request->session()->get($slug.'_uuid');
             $new_path = str_replace($uuid, $data->getKey(), $old_path);
-            $folder_path = substr($old_path, 0, strpos($old_path, $uuid)).$uuid;
+            $folder_path = substr((string) $old_path, 0, strpos((string) $old_path, (string) $uuid)).$uuid;
 
-            $rows->where('type', 'media_picker')->each(function ($row) use ($data, $uuid) {
+            $rows->where('type', 'media_picker')->each(function ($row) use ($data, $uuid): void {
                 $data->{$row->field} = str_replace($uuid, $data->getKey(), $data->{$row->field});
             });
             $data->save();
@@ -226,19 +226,19 @@ abstract class Controller extends BaseController
             $fieldName = !empty($data[$fieldName]) && is_array($data[$fieldName]) ? $fieldName.'.*' : $fieldName;
 
             // Get the rules for the current field whatever the format it is in
-            $rules[$fieldName] = is_array($fieldRules) ? $fieldRules : explode('|', $fieldRules);
+            $rules[$fieldName] = is_array($fieldRules) ? $fieldRules : explode('|', (string) $fieldRules);
 
             if ($id && property_exists($field->details->validation, 'edit')) {
                 $action_rules = $field->details->validation->edit->rule;
-                $rules[$fieldName] = array_merge($rules[$fieldName], (is_array($action_rules) ? $action_rules : explode('|', $action_rules)));
+                $rules[$fieldName] = array_merge($rules[$fieldName], (is_array($action_rules) ? $action_rules : explode('|', (string) $action_rules)));
             } elseif (!$id && property_exists($field->details->validation, 'add')) {
                 $action_rules = $field->details->validation->add->rule;
-                $rules[$fieldName] = array_merge($rules[$fieldName], (is_array($action_rules) ? $action_rules : explode('|', $action_rules)));
+                $rules[$fieldName] = array_merge($rules[$fieldName], (is_array($action_rules) ? $action_rules : explode('|', (string) $action_rules)));
             }
             // Fix Unique validation rule on Edit Mode
             if ($is_update) {
                 foreach ($rules[$fieldName] as &$fieldRule) {
-                    if (strpos(strtoupper($fieldRule), 'UNIQUE') !== false) {
+                    if (str_contains(strtoupper((string) $fieldRule), 'UNIQUE')) {
                         $fieldRule = \Illuminate\Validation\Rule::unique($name)->ignore($id);
                     }
                 }
@@ -257,43 +257,19 @@ abstract class Controller extends BaseController
 
     public function getContentBasedOnType(Request $request, $slug, $row, $options = null)
     {
-        switch ($row->type) {
-            /********** PASSWORD TYPE **********/
-            case 'password':
-                return (new Password($request, $slug, $row, $options))->handle();
-            /********** CHECKBOX TYPE **********/
-            case 'checkbox':
-                return (new Checkbox($request, $slug, $row, $options))->handle();
-            /********** MULTIPLE CHECKBOX TYPE **********/
-            case 'multiple_checkbox':
-                return (new MultipleCheckbox($request, $slug, $row, $options))->handle();
-            /********** FILE TYPE **********/
-            case 'file':
-                return (new File($request, $slug, $row, $options))->handle();
-            /********** MULTIPLE IMAGES TYPE **********/
-            case 'multiple_images':
-                return (new MultipleImage($request, $slug, $row, $options))->handle();
-            /********** SELECT MULTIPLE TYPE **********/
-            case 'select_multiple':
-                return (new SelectMultiple($request, $slug, $row, $options))->handle();
-            /********** IMAGE TYPE **********/
-            case 'image':
-                return (new ContentImage($request, $slug, $row, $options))->handle();
-            /********** DATE TYPE **********/
-            case 'date':
-            /********** TIMESTAMP TYPE **********/
-            case 'timestamp':
-                return (new Timestamp($request, $slug, $row, $options))->handle();
-            /********** COORDINATES TYPE **********/
-            case 'coordinates':
-                return (new Coordinates($request, $slug, $row, $options))->handle();
-            /********** RELATIONSHIPS TYPE **********/
-            case 'relationship':
-                return (new Relationship($request, $slug, $row, $options))->handle();
-            /********** ALL OTHER TEXT TYPE **********/
-            default:
-                return (new Text($request, $slug, $row, $options))->handle();
-        }
+        return match ($row->type) {
+            'password' => (new Password($request, $slug, $row, $options))->handle(),
+            'checkbox' => (new Checkbox($request, $slug, $row, $options))->handle(),
+            'multiple_checkbox' => (new MultipleCheckbox($request, $slug, $row, $options))->handle(),
+            'file' => (new File($request, $slug, $row, $options))->handle(),
+            'multiple_images' => (new MultipleImage($request, $slug, $row, $options))->handle(),
+            'select_multiple' => (new SelectMultiple($request, $slug, $row, $options))->handle(),
+            'image' => (new ContentImage($request, $slug, $row, $options))->handle(),
+            'date', 'timestamp' => (new Timestamp($request, $slug, $row, $options))->handle(),
+            'coordinates' => (new Coordinates($request, $slug, $row, $options))->handle(),
+            'relationship' => (new Relationship($request, $slug, $row, $options))->handle(),
+            default => (new Text($request, $slug, $row, $options))->handle(),
+        };
     }
 
     public function deleteFileIfExists($path)

@@ -362,7 +362,7 @@ class FormfieldsTest extends TestCase
     private function createBreadForFormfield($type, $name, $options = '')
     {
         Schema::dropIfExists('categories');
-        Schema::create('categories', function ($table) use ($type, $name) {
+        Schema::create('categories', function ($table) use ($type, $name): void {
             $table->bigIncrements('id');
             $table->{$type}($name)->nullable();
             $table->timestamps();
@@ -375,7 +375,7 @@ class FormfieldsTest extends TestCase
         $this->visitRoute('voyager.bread.create', ['table' => 'categories'])
         ->select($name, 'field_input_type_'.$name)
         ->type($options, 'field_details_'.$name)
-        ->type('TCG\\Voyager\\Models\\Category', 'model_name')
+        ->type(\TCG\Voyager\Models\Category::class, 'model_name')
         ->press(__('voyager::generic.submit'))
         ->seeRouteIs('voyager.bread.index');
 

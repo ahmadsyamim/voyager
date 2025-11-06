@@ -1,0 +1,7 @@
+includes:
+  - vendor/phpstan/phpstan-deprecation-rules/rules.neon
+
+parameters:
+  level: 2 # You can adjust the level (0-9). Higher levels mean stricter checks.
+  paths:
+    - src # Your project's source code directory

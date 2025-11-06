@@ -11,14 +11,10 @@ class BreadUpdated
 
     public $dataType;
 
-    public $data;
-
-    public function __construct(DataType $dataType, $data)
+    public function __construct(DataType $dataType, public $data)
     {
         $this->dataType = $dataType;
 
-        $this->data = $data;
-
-        event(new BreadChanged($dataType, $data, 'Updated'));
+        event(new BreadChanged($dataType, $this->data, 'Updated'));
     }
 }

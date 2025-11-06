@@ -17,7 +17,7 @@ use TCG\Voyager\Facades\Voyager;
 |
 */
 
-Route::group(['as' => 'voyager.'], function () {
+Route::group(['as' => 'voyager.'], function (): void {
     event(new Routing());
 
     $namespacePrefix = '\\' . config('voyager.controllers.namespace') . '\\';
@@ -25,7 +25,7 @@ Route::group(['as' => 'voyager.'], function () {
     Route::get('login', ['uses' => $namespacePrefix . 'VoyagerAuthController@login',     'as' => 'login']);
     Route::post('login', ['uses' => $namespacePrefix . 'VoyagerAuthController@postLogin', 'as' => 'postlogin']);
 
-    Route::group(['middleware' => 'admin.user'], function () use ($namespacePrefix) {
+    Route::group(['middleware' => 'admin.user'], function () use ($namespacePrefix): void {
         event(new RoutingAdmin());
 
         // Main Admin and Logout Route
@@ -51,7 +51,7 @@ Route::group(['as' => 'voyager.'], function () {
             }
         } catch (\InvalidArgumentException $e) {
             throw new \InvalidArgumentException("Custom routes hasn't been configured because: " . $e->getMessage(), 1);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             // do nothing, might just be because table not yet migrated.
         }
 
@@ -59,14 +59,14 @@ Route::group(['as' => 'voyager.'], function () {
         Route::group([
             'as'     => 'menus.',
             'prefix' => 'menus/{menu}',
-        ], function () use ($namespacePrefix) {
+        ], function () use ($namespacePrefix): void {
             Route::get('builder', ['uses' => $namespacePrefix . 'VoyagerMenuController@builder',    'as' => 'builder']);
             Route::post('order', ['uses' => $namespacePrefix . 'VoyagerMenuController@order_item', 'as' => 'order_item']);
 
             Route::group([
                 'as'     => 'item.',
                 'prefix' => 'item',
-            ], function () use ($namespacePrefix) {
+            ], function () use ($namespacePrefix): void {
                 Route::delete('{id}', ['uses' => $namespacePrefix . 'VoyagerMenuController@delete_menu', 'as' => 'destroy']);
                 Route::post('/', ['uses' => $namespacePrefix . 'VoyagerMenuController@add_item',    'as' => 'add']);
                 Route::put('/', ['uses' => $namespacePrefix . 'VoyagerMenuController@update_item', 'as' => 'update']);
@@ -77,7 +77,7 @@ Route::group(['as' => 'voyager.'], function () {
         Route::group([
             'as'     => 'settings.',
             'prefix' => 'settings',
-        ], function () use ($namespacePrefix) {
+        ], function () use ($namespacePrefix): void {
             Route::get('/', ['uses' => $namespacePrefix . 'VoyagerSettingsController@index',        'as' => 'index']);
             Route::post('/', ['uses' => $namespacePrefix . 'VoyagerSettingsController@store',        'as' => 'store']);
             Route::put('/', ['uses' => $namespacePrefix . 'VoyagerSettingsController@update',       'as' => 'update']);
@@ -91,7 +91,7 @@ Route::group(['as' => 'voyager.'], function () {
         Route::group([
             'as'     => 'media.',
             'prefix' => 'media',
-        ], function () use ($namespacePrefix) {
+        ], function () use ($namespacePrefix): void {
             Route::get('/', ['uses' => $namespacePrefix . 'VoyagerMediaController@index',              'as' => 'index']);
             Route::post('files', ['uses' => $namespacePrefix . 'VoyagerMediaController@files',              'as' => 'files']);
             Route::post('new_folder', ['uses' => $namespacePrefix . 'VoyagerMediaController@new_folder',         'as' => 'new_folder']);
@@ -106,7 +106,7 @@ Route::group(['as' => 'voyager.'], function () {
         Route::group([
             'as'     => 'bread.',
             'prefix' => 'bread',
-        ], function () use ($namespacePrefix) {
+        ], function () use ($namespacePrefix): void {
             Route::get('/', ['uses' => $namespacePrefix . 'VoyagerBreadController@index',              'as' => 'index']);
             Route::get('{table}/create', ['uses' => $namespacePrefix . 'VoyagerBreadController@create',     'as' => 'create']);
             Route::post('/', ['uses' => $namespacePrefix . 'VoyagerBreadController@store',   'as' => 'store']);
@@ -126,7 +126,7 @@ Route::group(['as' => 'voyager.'], function () {
         Route::group([
             'as'     => 'compass.',
             'prefix' => 'compass',
-        ], function () use ($namespacePrefix) {
+        ], function () use ($namespacePrefix): void {
             Route::get('/', ['uses' => $namespacePrefix . 'VoyagerCompassController@index',  'as' => 'index']);
             Route::post('/', ['uses' => $namespacePrefix . 'VoyagerCompassController@index',  'as' => 'post']);
         });

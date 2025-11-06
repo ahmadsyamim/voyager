@@ -8,14 +8,7 @@ class BreadImagesDeleted
 {
     use SerializesModels;
 
-    public $data;
-
-    public $images;
-
-    public function __construct($data, $images)
+    public function __construct(public $data, public $images)
     {
-        $this->data = $data;
-
-        $this->images = $images;
     }
 }

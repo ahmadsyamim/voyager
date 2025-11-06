@@ -30,7 +30,7 @@ class VoyagerCompassController extends Controller
 
         if ($this->request->input('log')) {
             $active_tab = 'logs';
-            LogViewer::setFile(base64_decode($this->request->input('log')));
+            LogViewer::setFile(base64_decode((string) $this->request->input('log')));
         }
 
         if ($this->request->input('logs')) {
@@ -40,13 +40,13 @@ class VoyagerCompassController extends Controller
         if ($this->request->input('download')) {
             $active_tab = 'logs';
 
-            return $this->download(LogViewer::pathToLogFile(base64_decode($this->request->input('download'))));
+            return $this->download(LogViewer::pathToLogFile(base64_decode((string) $this->request->input('download'))));
         } elseif ($this->request->has('del')) {
             $active_tab = 'logs';
-            app('files')->delete(LogViewer::pathToLogFile(base64_decode($this->request->input('del'))));
+            app('files')->delete(LogViewer::pathToLogFile(base64_decode((string) $this->request->input('del'))));
 
             return redirect($this->request->url().'?logs=true')->with([
-                'message'    => __('voyager::compass.logs.delete_success').' '.base64_decode($this->request->input('del')),
+                'message'    => __('voyager::compass.logs.delete_success').' '.base64_decode((string) $this->request->input('del')),
                 'alert-type' => 'success',
             ]);
         } elseif ($this->request->has('delall')) {
@@ -103,7 +103,7 @@ class VoyagerCompassController extends Controller
     {
 
         // Add each new line to an array item and strip out any empty items
-        $output = array_filter(explode("\n", $output));
+        $output = array_filter(explode("\n", (string) $output));
 
         // Get the current index of: "Available commands:"
         $index = array_search('Available commands:', $output);
@@ -120,8 +120,8 @@ class VoyagerCompassController extends Controller
         $commands = [];
 
         foreach ($output as $output_line) {
-            if (empty(trim(substr($output_line, 0, 2)))) {
-                $parts = preg_split('/  +/', trim($output_line));
+            if (empty(trim(substr((string) $output_line, 0, 2)))) {
+                $parts = preg_split('/  +/', trim((string) $output_line));
                 $command = (object) ['name' => trim(@$parts[0]), 'description' => trim(@$parts[1])];
                 array_push($commands, $command);
             }
@@ -259,13 +259,13 @@ class LogViewer
 
         $file = app('files')->get(self::$file);
 
-        preg_match_all($pattern, $file, $headings);
+        preg_match_all($pattern, (string) $file, $headings);
 
         if (!is_array($headings)) {
             return $log;
         }
 
-        $log_data = preg_split($pattern, $file);
+        $log_data = preg_split($pattern, (string) $file);
 
         if ($log_data[0] < 1) {
             array_shift($log_data);
@@ -310,7 +310,7 @@ class LogViewer
         $files = array_filter($files, 'is_file');
         if ($basename && is_array($files)) {
             foreach ($files as $k => $file) {
-                $files[$k] = basename($file);
+                $files[$k] = basename((string) $file);
             }
         }
 
