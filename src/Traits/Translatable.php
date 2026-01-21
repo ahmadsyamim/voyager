@@ -141,7 +141,7 @@ trait Translatable
         return $value;
     }
 
-    public function getTranslationsOf($attribute, array $languages = null, $fallback = true)
+    public function getTranslationsOf($attribute, ?array $languages = null, $fallback = true): array
     {
         if (is_null($languages)) {
             $languages = config('voyager.multilingual.locales', [config('voyager.multilingual.default')]);
