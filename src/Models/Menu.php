@@ -53,11 +53,24 @@ class Menu extends Model
     public static function display($menuName, $type = null, array $options = [])
     {
         // GET THE MENU - sort collection in blade
-        $menu = \Cache::remember('voyager_menu_'.$menuName, \Carbon\Carbon::now()->addDays(30), fn() => static::where('name', '=', $menuName)
-        ->with(['parent_items.children' => function ($q): void {
-            $q->orderBy('order');
-        }])
-        ->first());
+        $cacheKey = 'voyager_menu_' . $menuName;
+        $menu = \Cache::remember($cacheKey, \Carbon\Carbon::now()->addDays(30), fn() => static::where('name', '=', $menuName)
+            ->with(['parent_items.children' => function ($q): void {
+                $q->orderBy('order');
+            }])
+            ->first());
+
+        // Fix: Check if the cached object is broken/incomplete
+        if ($menu instanceof \__PHP_Incomplete_Class) {
+            \Cache::forget($cacheKey);
+
+            // Re-fetch fresh from DB
+            $menu = static::where('name', '=', $menuName)
+                ->with(['parent_items.children' => function ($q): void {
+                    $q->orderBy('order');
+                }])
+                ->first();
+        }
 
         // Check for Menu Existence
         if (!isset($menu)) {
@@ -65,7 +78,6 @@ class Menu extends Model
         }
 
         event(new MenuDisplay($menu));
-
         // Convert options array into object
         $options = (object) $options;
 
@@ -76,7 +88,7 @@ class Menu extends Model
         }
 
         if ($type == 'admin') {
-            $type = 'voyager::menu.'.$type;
+            $type = 'voyager::menu.' . $type;
         } else {
             if (is_null($type)) {
                 $type = 'voyager::menu.default';
@@ -100,7 +112,7 @@ class Menu extends Model
 
     public function removeMenuFromCache()
     {
-        \Cache::forget('voyager_menu_'.$this->name);
+        \Cache::forget('voyager_menu_' . $this->name);
     }
 
     protected static function processItems($items)
