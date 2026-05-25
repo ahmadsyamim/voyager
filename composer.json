@@ -1,69 +1,69 @@
 {
-  "name": "ahmadsyamim/voyager",
-  "description": "Forked from tcg/voyager. A Laravel Admin Package for The Control Group to make your life easier and steer your project in the right direction",
-  "keywords": [
-    "laravel",
-    "admin",
-    "panel"
-  ],
-  "license": "MIT",
-  "homepage": "https://github.com/ahmadsyamim/voyager/",
-  "support": {
-    "issues": "https://github.com/ahmadsyamim/voyager/issues",
-    "source": "https://github.com/ahmadsyamim/voyager"
-  },
-  "authors": [
-    {
-      "name": "Ahmad Syamim Suhairi",
-      "email": "ahmad.syamim@gmail.com"
+    "name": "ahmadsyamim/voyager",
+    "description": "Forked from tcg/voyager. A Laravel Admin Package for The Control Group to make your life easier and steer your project in the right direction",
+    "keywords": [
+        "laravel",
+        "admin",
+        "panel"
+    ],
+    "license": "MIT",
+    "homepage": "https://github.com/ahmadsyamim/voyager/",
+    "support": {
+        "issues": "https://github.com/ahmadsyamim/voyager/issues",
+        "source": "https://github.com/ahmadsyamim/voyager"
+    },
+    "authors": [
+        {
+            "name": "Ahmad Syamim Suhairi",
+            "email": "ahmad.syamim@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.2|^8.3|^8.4",
+        "illuminate/support": "~11.0|~12.0|~13.0",
+        "intervention/image": "^2.7",
+        "laravel/ui": ">=1.0",
+        "arrilot/laravel-widgets": "^3.7",
+        "league/flysystem": "~1.1|~2.0|~3.0",
+        "ext-json": "*",
+        "onecentlin/laravel-adminer": "^7.1"
+    },
+    "require-dev": {
+        "phpunit/phpcov": ">=6.0",
+        "phpunit/phpunit": ">=8.0",
+        "laravel/framework": "~8.0|~9.0|~10.0|~11.0|~12.0|~13.0",
+        "orchestra/testbench": ">=6.0",
+        "laravel/browser-kit-testing": ">=6.1.0",
+        "orchestra/testbench-browser-kit": ">=4.0",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "vimeo/psalm": "^6.12",
+        "rector/rector": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "TCG\\Voyager\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TCG\\Voyager\\Tests\\": "tests/",
+            "TCG\\Voyager\\Tests\\Database\\Factories\\": "tests/database/factories/",
+            "Database\\Seeders\\": "vendor/orchestra/testbench-core/laravel/database/seeders"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "TCG\\Voyager\\VoyagerServiceProvider",
+                "TCG\\Voyager\\Providers\\VoyagerDummyServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@php vendor/bin/testbench package:discover --ansi"
+        ]
     }
-  ],
-  "require": {
-    "php": "^8.2|^8.3|^8.4",
-    "illuminate/support": "~11.0|~12.0",
-    "intervention/image": "^2.7",
-    "laravel/ui": ">=1.0",
-    "arrilot/laravel-widgets": "^3.7",
-    "league/flysystem": "~1.1|~2.0|~3.0",
-    "ext-json": "*",
-    "onecentlin/laravel-adminer": "^7.1"
-  },
-  "require-dev": {
-    "phpunit/phpcov": ">=6.0",
-    "phpunit/phpunit": ">=8.0",
-    "laravel/framework": "~8.0|~9.0|~10.0|~11.0|~12.0",
-    "orchestra/testbench": ">=6.0",
-    "laravel/browser-kit-testing": ">=6.1.0",
-    "orchestra/testbench-browser-kit": ">=4.0",
-    "phpstan/phpstan": "^2.1",
-    "phpstan/phpstan-deprecation-rules": "^2.0",
-    "vimeo/psalm": "^6.12",
-    "rector/rector": "^2.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "TCG\\Voyager\\": "src/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "TCG\\Voyager\\Tests\\": "tests/",
-      "TCG\\Voyager\\Tests\\Database\\Factories\\": "tests/database/factories/",
-      "Database\\Seeders\\": "vendor/orchestra/testbench-core/laravel/database/seeders"
-    }
-  },
-  "minimum-stability": "stable",
-  "extra": {
-    "laravel": {
-      "providers": [
-        "TCG\\Voyager\\VoyagerServiceProvider",
-        "TCG\\Voyager\\Providers\\VoyagerDummyServiceProvider"
-      ]
-    }
-  },
-  "scripts": {
-    "post-autoload-dump": [
-      "@php vendor/bin/testbench package:discover --ansi"
-    ]
-  }
 }
