@@ -91,6 +91,15 @@ class VoyagerServiceProvider extends ServiceProvider
      */
     public function boot(Router $router, Dispatcher $event)
     {
+        // Laravel 11+ core can bind the 'image' container key to its own
+        // v4-based manager (a deferrable provider that fires lazily, after
+        // the eager v2 registration in register()), shadowing the v2
+        // ImageManager registered above. The v2 facade checks its resolved
+        // instance BEFORE the container, so pinning the root here keeps the
+        // image upload handlers (Image, MultipleImage, media library)
+        // working on every supported framework version.
+        \Intervention\Image\Facades\Image::swap(new \Intervention\Image\ImageManager());
+
         if (config('voyager.user.add_default_role_on_register')) {
             $model = Auth::guard(app('VoyagerGuard'))->getProvider()->getModel();
             call_user_func($model . '::created', function ($user) use ($model): void {
